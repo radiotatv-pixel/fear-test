@@ -72,10 +72,14 @@
   .payment-card { font-size: 18px; font-weight: 600; font-family: monospace; letter-spacing: 1px; background: #fff; padding: 12px; border-radius: 8px; border: 1px dashed #ccc; margin-bottom: 12px; cursor: pointer; user-select: all; }
   .payment-card:hover { border-color: #111; }
   .payment-note { font-size: 13px; color: #888; }
+  .sending { opacity: 0.6; pointer-events: none; }
 </style>
+<base target="_blank">
 </head>
 <body>
 <div class="app">
+
+  <!-- SCREEN 1: INTRO -->
   <div id="screen-intro" class="fade-in">
     <div class="intro-badge">Тест на 2 хвилини</div>
     <h1 class="intro-title">Чи керує страх вашими рішеннями?</h1>
@@ -89,6 +93,7 @@
     <p class="trust-note">Результат — персональний, дані конфіденційні</p>
   </div>
 
+  <!-- SCREEN 2: QUIZ -->
   <div id="screen-quiz" class="hidden">
     <div class="progress-wrap">
       <div class="progress-top"><span id="progress-label">Питання 1 з 5</span><span id="progress-pct">0%</span></div>
@@ -101,6 +106,7 @@
     </div>
   </div>
 
+  <!-- SCREEN 3: RESULT -->
   <div id="screen-result" class="hidden result-card">
     <div class="result-badge" id="result-badge">Результат тесту</div>
     <div class="result-title" id="result-title"></div>
@@ -108,6 +114,7 @@
     <button class="btn btn-primary btn-full" onclick="showDream()">Продовжити →</button>
   </div>
 
+  <!-- SCREEN 4: DREAM -->
   <div id="screen-dream" class="hidden">
     <div class="dream-title">А тепер уявіть, що страх зник на один день. Зовсім.</div>
     <div class="dream-sub">Що ви зробили б насамперед?</div>
@@ -118,6 +125,7 @@
     </div>
   </div>
 
+  <!-- SCREEN 5: CONTACT FORM -->
   <div id="screen-form" class="hidden">
     <div class="dream-title">Залиште контакт, щоб отримати результат</div>
     <div class="dream-sub">Ми надішлемо вашу діагностику та пропозицію практикуму</div>
@@ -129,9 +137,10 @@
       <label class="form-label">Telegram (@username або номер)</label>
       <input type="text" class="form-input" id="input-contact" placeholder="@username або +380...">
     </div>
-    <button class="btn btn-primary btn-full" onclick="submitForm()">Отримати результат</button>
+    <button class="btn btn-primary btn-full" id="btn-submit" onclick="submitForm()">Отримати результат</button>
   </div>
 
+  <!-- SCREEN 6: CTA / PAYMENT -->
   <div id="screen-cta" class="hidden">
     <div class="result-card" style="padding-top:8px;">
       <div class="result-badge">Практикум</div>
@@ -158,15 +167,19 @@
     </div>
   </div>
 
+  <!-- SCREEN 7: SUCCESS -->
   <div id="screen-success" class="hidden result-card">
     <div class="success-icon">🎯</div>
     <div class="success-title">Дякуємо!</div>
     <div class="success-text">Ваша діагностика надіслана. Незабаром ми зв'яжемося з вами з пропозицією практикуму.</div>
     <button class="btn btn-primary btn-full" onclick="window.Telegram.WebApp.close()">Закрити</button>
   </div>
+
 </div>
 
 <script>
+const GS_URL = 'https://script.google.com/macros/s/AKfycbwlXQ1aWfx-1txLb4pVtyB1IXK7O-VE3O7fBfmGZotrEkmo-qgZOxXRlZEFTsmeU4LE/exec';
+
 const questions = [
   { q: "Вам пропонують нову можливість.", options: [{ text: "Я довго думаю і часто відмовляюся", val: 1 }, { text: "Думаю, але якщо відчуваю готовність — пробую", val: 2 }, { text: "Майже одразу погоджуюсь", val: 3 }] },
   { q: "Якщо потрібно зробити щось нове...", options: [{ text: "Спочатку шукаю всі можливі ризики", val: 1 }, { text: "Готуюся і тоді починаю", val: 2 }, { text: "Просто починаю", val: 3 }] },
@@ -302,13 +315,49 @@ function submitForm() {
     alert('Будь ласка, заповніть обидва поля');
     return;
   }
-  if (window.Telegram && Telegram.WebApp) {
-    Telegram.WebApp.sendData(JSON.stringify({ name: name, contact: contact, result: document.getElementById('result-title').textContent, dream: dreams[dreamChoice].text }));
+
+  const btn = document.getElementById('btn-submit');
+  btn.classList.add('sending');
+  btn.textContent = 'Надсилаємо...';
+
+  const result = document.getElementById('result-title').textContent;
+  const dream = dreams[dreamChoice].text;
+  let tgId = '';
+  let tgUsername = '';
+
+  if (window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
+    tgId = Telegram.WebApp.initDataUnsafe.user.id || '';
+    tgUsername = Telegram.WebApp.initDataUnsafe.user.username || '';
   }
-  document.getElementById('screen-form').classList.add('hidden');
-  const s = document.getElementById('screen-cta');
-  s.classList.remove('hidden');
-  s.classList.add('fade-in');
+
+  const payload = {
+    name: name,
+    contact: contact,
+    result: result,
+    dream: dream,
+    tgId: tgId,
+    tgUsername: tgUsername
+  };
+
+  // Надсилаємо в Google Sheets
+  fetch(GS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(() => {});
+
+  // Також надсилаємо в Telegram (бекап)
+  if (window.Telegram && Telegram.WebApp) {
+    try { Telegram.WebApp.sendData(JSON.stringify(payload)); } catch(e) {}
+  }
+
+  setTimeout(() => {
+    document.getElementById('screen-form').classList.add('hidden');
+    const s = document.getElementById('screen-cta');
+    s.classList.remove('hidden');
+    s.classList.add('fade-in');
+  }, 800);
 }
 
 function copyCard() {
