@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>День 4 — По той бік страху</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4EFE3;
+    --bg-deep:#2E3F33;
+    --ink:#28241F;
+    --ink-soft:#5B564C;
+    --gold:#B4863A;
+    --rose:#A15D4C;
+    --line:#DCD3BE;
+    --card:#FBF8F1;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:0 20px 120px;}
+
+  /* HERO */
+  .hero{
+    background:var(--bg-deep);
+    color:#F4EFE3;
+    padding:56px 20px 64px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(circle at 50% 0%, rgba(180,134,58,0.25), transparent 60%);
+  }
+  .hero-inner{position:relative;max-width:560px;margin:0 auto;}
+  .day-badge{
+    display:inline-block;
+    font-family:'Inter',sans-serif;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#D9C48B;
+    border:1px solid rgba(217,196,139,0.5);
+    padding:6px 16px;
+    border-radius:999px;
+    margin-bottom:22px;
+  }
+  .hero h1{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:38px;
+    line-height:1.15;
+    margin:0 0 14px;
+  }
+  .hero p{
+    font-size:15px;
+    color:#CFC7B4;
+    margin:0;
+  }
+
+  /* SECTIONS */
+  .item{margin-top:34px;}
+  .media{
+    border-radius:16px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    background:#000;
+  }
+  .media img{display:block;width:100%;height:auto;}
+  .media iframe{display:block;width:100%;border:0;border-radius:16px;}
+  .media video{display:block;width:100%;height:auto;border-radius:16px;}
+  .media.video iframe{aspect-ratio:9/16;height:auto;}
+  .media.video video{aspect-ratio:9/16;height:auto;object-fit:cover;}
+  .media.audio iframe{height:260px;background:var(--card);}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:26px 24px;
+  }
+  .card .who{
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:12px;
+  }
+  .card .who .num{
+    font-family:'Fraunces',serif;
+    font-size:13px;
+    color:var(--gold);
+    letter-spacing:.05em;
+  }
+  .card .who .name{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:19px;
+  }
+  .card .role{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:-8px 0 14px;
+  }
+  .card p{margin:0 0 12px;font-size:15.5px;}
+  .card p:last-child{margin-bottom:0;}
+
+  .prompt{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-left:3px solid var(--gold);
+    border-radius:12px;
+    padding:24px;
+  }
+  .prompt h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:19px;
+    margin:0 0 12px;
+  }
+  .prompt ul{margin:0;padding-left:0;list-style:none;}
+  .prompt li{margin-bottom:8px;font-size:15px;}
+
+  .care{
+    background:#EFE9D8;
+    border-radius:16px;
+    padding:24px;
+  }
+  .care h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:18px;
+    margin:0 0 14px;
+  }
+  .care ol{margin:0;padding-left:20px;}
+  .care li{margin-bottom:8px;font-size:15px;}
+
+  /* HOMEWORK */
+  .homework{
+    background:var(--bg-deep);
+    color:#F4EFE3;
+    border-radius:18px;
+    padding:30px 26px;
+  }
+  .homework h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:21px;
+    margin:0 0 16px;
+    color:#F4EFE3;
+  }
+  .homework ul{margin:0 0 18px;padding-left:0;list-style:none;}
+  .homework li{margin-bottom:9px;font-size:15px;color:#E3DCC8;}
+  .homework .note{font-size:13.5px;color:#B9AE8C;margin:0 0 20px;}
+  .homework textarea{
+    width:100%;
+    min-height:110px;
+    background:#3A4B3E;
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:12px;
+    color:#F4EFE3;
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    padding:14px;
+    resize:vertical;
+  }
+  .homework textarea::placeholder{color:#9AA894;}
+  .homework button{
+    margin-top:14px;
+    width:100%;
+    background:var(--gold);
+    color:#2A1F0F;
+    border:none;
+    border-radius:12px;
+    padding:15px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:15px;
+    cursor:pointer;
+    transition:opacity .2s;
+  }
+  .homework button:hover{opacity:.9;}
+  .homework button:disabled{opacity:.5;cursor:not-allowed;}
+
+  /* NEXT DAY REVEAL */
+  #next-day{
+    display:none;
+    text-align:center;
+    padding:44px 24px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+  }
+  #next-day.show{display:block;animation:fadeUp .5s ease-out;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  #next-day .icon{font-size:34px;margin-bottom:10px;}
+  #next-day h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:22px;
+    margin:0 0 10px;
+  }
+  #next-day p{color:var(--ink-soft);font-size:15px;margin:0 0 20px;}
+  #next-day .btn2{
+    display:inline-block;
+    background:var(--bg-deep);
+    color:#F4EFE3;
+    padding:14px 28px;
+    border-radius:12px;
+    font-weight:600;
+    font-size:15px;
+    text-decoration:none;
+  }
+
+  .thankyou{
+    display:none;
+    text-align:center;
+    padding:20px 0 6px;
+    color:var(--ink-soft);
+    font-size:14px;
+  }
+  .thankyou.show{display:block;}
+
+  .divider{
+    text-align:center;
+    color:var(--gold);
+    font-size:18px;
+    margin:38px 0;
+  }
+
+  /* Захист від випадкового завантаження медіа */
+  img, video {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    pointer-events: auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="day-badge">День 4 з 14</div>
+    <h1>По той бік страху</h1>
+    <p>Сьогодні розберемось, чим відрізняються страх, тривога і фобія.</p>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- 4.1 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1K72s4DgD5EfCG-Iv9GTqjgTUENcvmbI4&sz=w1000" alt="">
+  </div>
+
+  <!-- 4.2 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=145h-FFo9j_RhiXKmi5ofy1-xpc_mRSBP&sz=w1000" alt="">
+  </div>
+
+  <!-- 4.3 -->
+  <div class="item card">
+    <p>Яка різниця між страхом, тривогою і фобією?</p>
+  </div>
+
+  <!-- 4.4 -->
+  <div class="item media audio">
+    <iframe src="https://drive.google.com/file/d/1ddQBNX3MQ4cVPhUedHP-trFD9H7gQ0CT/preview"></iframe>
+  </div>
+
+  <!-- 4.5 -->
+  <div class="item card">
+    <p style="font-size:13px;color:var(--ink-soft);">Якщо зручніше друкований варіант аудіо файлу, про страхи, фобії і тривогу.</p>
+    <p>Сьогодні ми поговоримо про три слова, які часто плутають між собою: тривога, страх, фобія. Багато людей називають усе одним словом — «страх». Але між ними є різниця. І коли ми починаємо її розуміти, стає легше зрозуміти й себе.</p>
+    <p>💚<br>Почнемо зі страху. Страх зазвичай виникає тоді, коли є щось конкретне. Наприклад: на тебе біжить собака; машина різко виїхала на дорогу; ти ледь не впала зі сходів. У цей момент організм швидко реагує на небезпеку. Страх допомагає нам виживати. Він не ворог. Він частина нашої системи захисту. І коли небезпека минає, страх поступово зменшується.</p>
+    <p>💚<br>А тепер тривога. Тривога більше пов'язана не з тим, що відбувається зараз, а з тим, що може статися. Наприклад: «А раптом я не впораюсь?» «А якщо щось трапиться з близькими?» «А якщо мене засудять?» «А якщо стане погано?»</p>
+    <p>Тобто небезпеки зараз може й не бути. Але мозок уже починає прораховувати можливі проблеми. Саме тому тривога часто живе в майбутньому. Вона ніби постійно запитує: «Що ще може піти не так?»</p>
+    <p>💚<br>А що таке фобія? Фобія — це вже дуже сильний і стійкий страх перед конкретною ситуацією або об'єктом. Наприклад: ліфтами; літаками; висотою; павуками; натовпом; закритими просторами.</p>
+    <p>При цьому людина часто розуміє, що її реакція занадто сильна. Але контролювати її дуже складно. Тому вона починає уникати того, що лякає. Саме уникання часто стає головною проблемою. Тому що життя поступово починає підлаштовуватися під страх.</p>
+    <p>💚<br>А тепер найцікавіше. Це три різні речі чи одна? І так, і ні. Усі вони пов'язані з однією системою — системою безпеки. Просто проявляються по-різному.</p>
+    <p>Можна уявити це як шкалу. На одному кінці — звичайний страх у конкретній ситуації. Далі — тривога, коли мозок починає шукати небезпеку наперед. А ще далі — фобія, коли страх стає настільки сильним, що починає обмежувати життя. Тому між ними більше спільного, ніж здається.</p>
+    <p>💚<br>І зараз я хочу сказати дуже важливу річ. Ні страх. Ні тривога. Ні навіть фобія. Не роблять людину слабкою. Ти не обирала боятися. Твоя нервова система не прокидається зранку з думкою: «Як би сьогодні зіпсувати життя?» Вона намагається тебе захистити. Навіть якщо іноді робить це занадто активно.</p>
+    <p>Тому наше завдання не воювати зі страхом. А зрозуміти: Що саме він намагається зробити? Що його запускає? І як допомогти собі почуватися безпечніше? Саме цим ми будемо займатися далі. І повір, розуміння себе часто вже саме по собі зменшує страх.</p>
+  </div>
+
+  <!-- 4.6 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1-GehN2LCIE6j_NCzeclxV-OlgUXuHLRo&sz=w1000" alt="">
+  </div>
+
+  <!-- 4.7 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1j2Z2QuG8guyIFLH8aBDm_bXqQPRn7-P-&sz=w1000" alt="">
+  </div>
+
+  <!-- 4.8 -->
+  <div class="item prompt">
+    <h3>🌷 Коротка вправа стабілізації</h3>
+    <p style="margin:0 0 14px;font-size:15px;">«Що відбувається зі мною зараз?»</p>
+    <p style="margin:0 0 14px;font-size:15px;">Коли нас накриває страх або тривога, ми часто автоматично віримо всім своїм думкам. Спробуй зараз на хвилину стати спостерігачем. Зупинися. І подумки закінчи три фрази:</p>
+    <ul>
+      <li>🔹 Зараз я думаю...</li>
+      <li>🔹 Зараз я відчуваю...</li>
+      <li>🔹 Зараз мені хочеться...</li>
+    </ul>
+    <p style="margin:14px 0 0;font-size:14px;color:var(--ink-soft);">Наприклад: «Зараз я думаю, що не впораюсь.» «Зараз я відчуваю тривогу.» «Зараз мені хочеться втекти або все відкласти.» Нічого не потрібно змінювати. Лише помітити.</p>
+  </div>
+
+  <!-- 4.9 -->
+  <div class="item card">
+    <p>Вправа на стабілізацію</p>
+  </div>
+
+  <!-- 4.10 -->
+  <div class="item media audio">
+    <iframe src="https://drive.google.com/file/d/17NYZNLF4s7gmg-DYrsWLDxqXL426RT_s/preview"></iframe>
+  </div>
+
+  <!-- 4.11 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1mLnj3wNctkGyWYuevssQEOZpLD5iEUcP&sz=w1000" alt="">
+  </div>
+
+  <!-- 4.12 -->
+  <div class="item card">
+    <p><b>«Сканування тіла»</b></p>
+    <p>Ми багато часу проводимо в думках і часто не помічаємо, що відбувається з тілом. Сядь зручно. Якщо хочеться — прикрий очі.</p>
+    <p>Повільно переведи увагу на маківку. Потім на обличчя. Щелепи. Шию. Плечі. Руки. Груди. Живіт. Спину. Таз. Ноги. Стопи.</p>
+    <p>Не потрібно нічого змінювати. Лише помічай. Де є напруга? Де є розслаблення? Де є тепло або холод? Де хочеться зробити глибший вдих?</p>
+    <p>Уяви, що ти знайомишся зі своїм тілом заново. Наприкінці запитай себе:<br>💚 Яка частина мого тіла зараз найбільше потребує турботи? І просто вислухай відповідь.</p>
+  </div>
+
+  <!-- 4.13 -->
+  <div class="item card">
+    <p>Тілесна опора.</p>
+  </div>
+
+  <!-- 4.14 -->
+  <div class="item media audio">
+    <iframe src="https://drive.google.com/file/d/1q7V6t9uFyAAFF1-Uki-T0oeQeRBhbeMs/preview"></iframe>
+  </div>
+
+  <!-- 4.15 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1fduJqbkHb4yZAQ2r8lQmja6B3HoI0cyQ&sz=w1000" alt="">
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- 4.16: HOMEWORK -->
+  <div class="item homework" id="homework-block">
+    <h3>✨ Мікродія на сьогодні</h3>
+    <p style="font-size:15px;color:#E3DCC8;margin:0 0 18px;">Сьогодні ми почнемо знайомитися зі своїми тригерами. Тригер — це те, що запускає або посилює страх. Іноді ми добре його знаємо. А іноді помічаємо лише наслідки.</p>
+
+    <p style="font-size:15px;color:#E3DCC8;margin:0 0 12px;">Протягом дня поспостерігай за собою і запиши:</p>
+    <ul>
+      <li>✍️ Які ситуації найчастіше викликають у мене страх або тривогу?</li>
+      <li>✍️ Що зазвичай запускає цей стан?</li>
+      <li>✍️ Що його підсилює?</li>
+    </ul>
+
+    <p class="note">Наприклад: певні місця; розмови; новини; конфлікти; очікування невідомого; думки про майбутнє; самотність; поспіх або перевтома. Не потрібно поки що нічого виправляти. Наше завдання сьогодні — почати помічати закономірності.</p>
+
+    <!-- 4.17: video that goes with the homework -->
+    <div class="media video" style="margin-bottom:18px;">
+      <video controls playsinline controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false;" src="https://radiotatv-pixel.github.io/fear-test/videos/4.17.mp4"></video>
+    </div>
+
+    <textarea id="reflection" placeholder="Напиши тут свою відповідь…"></textarea>
+    <button id="submit-btn" onclick="submitReflection()">💌 Відправити й розблокувати наступне заняття</button>
+    <div class="thankyou" id="thankyou">Дякуємо, що поділилась. Ми поруч. 💚</div>
+  </div>
+
+  <!-- NEXT DAY -->
+  <div id="next-day">
+    <div class="icon">🎉</div>
+    <h3>День 5 вже готовий</h3>
+    <p>Ти зробила ще один крок. Продовжимо, коли будеш готова.</p>
+    <a href="#" class="btn2">Перейти до Дня 5</a>
+  </div>
+
+</div>
+
+<script>
+function submitReflection() {
+  var text = document.getElementById('reflection').value.trim();
+  if (!text) {
+    alert('Напиши, будь ласка, кілька слів перед відправкою.');
+    return;
+  }
+  var btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Надсилаємо…';
+
+  // ПОКИ ЩО ЛОКАЛЬНО, ДЛЯ ПЕРЕГЛЯДУ.
+  // Коли погодимо вигляд — тут буде такий самий fetch() до Apps Script,
+  // як у тесті (handleTelegramUpdate/appendResponse), просто без Telegram.
+  setTimeout(function () {
+    document.getElementById('thankyou').classList.add('show');
+    document.getElementById('reflection').style.display = 'none';
+    btn.style.display = 'none';
+
+    setTimeout(function () {
+      document.getElementById('next-day').classList.add('show');
+      document.getElementById('next-day').scrollIntoView({behavior: 'smooth', block: 'center'});
+    }, 1200);
+  }, 600);
+}
+
+// Захист від випадкового завантаження — блокуємо праву кнопку миші на фото
+document.addEventListener('contextmenu', function (e) {
+  if (e.target.tagName === 'IMG') e.preventDefault();
+});
+</script>
+
+</body>
+
+</html>
