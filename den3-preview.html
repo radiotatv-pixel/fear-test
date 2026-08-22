@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>День 3 — По той бік страху</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4EFE3;
+    --bg-deep:#2E3F33;
+    --ink:#28241F;
+    --ink-soft:#5B564C;
+    --gold:#B4863A;
+    --rose:#A15D4C;
+    --line:#DCD3BE;
+    --card:#FBF8F1;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:0 20px 120px;}
+
+  /* HERO */
+  .hero{
+    background:var(--bg-deep);
+    color:#F4EFE3;
+    padding:56px 20px 64px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(circle at 50% 0%, rgba(180,134,58,0.25), transparent 60%);
+  }
+  .hero-inner{position:relative;max-width:560px;margin:0 auto;}
+  .day-badge{
+    display:inline-block;
+    font-family:'Inter',sans-serif;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#D9C48B;
+    border:1px solid rgba(217,196,139,0.5);
+    padding:6px 16px;
+    border-radius:999px;
+    margin-bottom:22px;
+  }
+  .hero h1{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:38px;
+    line-height:1.15;
+    margin:0 0 14px;
+  }
+  .hero p{
+    font-size:15px;
+    color:#CFC7B4;
+    margin:0;
+  }
+
+  /* SECTIONS */
+  .item{margin-top:34px;}
+  .media{
+    border-radius:16px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    background:#000;
+  }
+  .media img{display:block;width:100%;height:auto;}
+  .media iframe{display:block;width:100%;border:0;border-radius:16px;}
+  .media video{display:block;width:100%;height:auto;border-radius:16px;}
+  .media.video iframe{aspect-ratio:9/16;height:auto;}
+  .media.video video{aspect-ratio:9/16;height:auto;object-fit:cover;}
+  .media.audio iframe{height:260px;background:var(--card);}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:26px 24px;
+  }
+  .card .who{
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:12px;
+  }
+  .card .who .num{
+    font-family:'Fraunces',serif;
+    font-size:13px;
+    color:var(--gold);
+    letter-spacing:.05em;
+  }
+  .card .who .name{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:19px;
+  }
+  .card .role{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:-8px 0 14px;
+  }
+  .card p{margin:0 0 12px;font-size:15.5px;}
+  .card p:last-child{margin-bottom:0;}
+
+  .prompt{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-left:3px solid var(--gold);
+    border-radius:12px;
+    padding:24px;
+  }
+  .prompt h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:19px;
+    margin:0 0 12px;
+  }
+  .prompt ul{margin:0;padding-left:0;list-style:none;}
+  .prompt li{margin-bottom:8px;font-size:15px;}
+
+  .care{
+    background:#EFE9D8;
+    border-radius:16px;
+    padding:24px;
+  }
+  .care h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:18px;
+    margin:0 0 14px;
+  }
+  .care ol{margin:0;padding-left:20px;}
+  .care li{margin-bottom:8px;font-size:15px;}
+
+  /* HOMEWORK */
+  .homework{
+    background:var(--bg-deep);
+    color:#F4EFE3;
+    border-radius:18px;
+    padding:30px 26px;
+  }
+  .homework h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:21px;
+    margin:0 0 16px;
+    color:#F4EFE3;
+  }
+  .homework ul{margin:0 0 18px;padding-left:0;list-style:none;}
+  .homework li{margin-bottom:9px;font-size:15px;color:#E3DCC8;}
+  .homework .note{font-size:13.5px;color:#B9AE8C;margin:0 0 20px;}
+  .homework textarea{
+    width:100%;
+    min-height:110px;
+    background:#3A4B3E;
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:12px;
+    color:#F4EFE3;
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    padding:14px;
+    resize:vertical;
+  }
+  .homework textarea::placeholder{color:#9AA894;}
+  .homework button{
+    margin-top:14px;
+    width:100%;
+    background:var(--gold);
+    color:#2A1F0F;
+    border:none;
+    border-radius:12px;
+    padding:15px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:15px;
+    cursor:pointer;
+    transition:opacity .2s;
+  }
+  .homework button:hover{opacity:.9;}
+  .homework button:disabled{opacity:.5;cursor:not-allowed;}
+
+  /* NEXT DAY REVEAL */
+  #next-day{
+    display:none;
+    text-align:center;
+    padding:44px 24px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+  }
+  #next-day.show{display:block;animation:fadeUp .5s ease-out;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  #next-day .icon{font-size:34px;margin-bottom:10px;}
+  #next-day h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:22px;
+    margin:0 0 10px;
+  }
+  #next-day p{color:var(--ink-soft);font-size:15px;margin:0 0 20px;}
+  #next-day .btn2{
+    display:inline-block;
+    background:var(--bg-deep);
+    color:#F4EFE3;
+    padding:14px 28px;
+    border-radius:12px;
+    font-weight:600;
+    font-size:15px;
+    text-decoration:none;
+  }
+
+  .thankyou{
+    display:none;
+    text-align:center;
+    padding:20px 0 6px;
+    color:var(--ink-soft);
+    font-size:14px;
+  }
+  .thankyou.show{display:block;}
+
+  .divider{
+    text-align:center;
+    color:var(--gold);
+    font-size:18px;
+    margin:38px 0;
+  }
+
+  /* Захист від випадкового завантаження медіа */
+  img, video {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    pointer-events: auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="day-badge">День 3 з 14</div>
+    <h1>По той бік страху</h1>
+    <p>Сьогодні дозволимо собі не поспішати — і подивимось, що вже почало змінюватись.</p>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- 3.1 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1kF-E5b2oF_8YWkIMXSUm-sViK_dTdTbO&sz=w1000" alt="">
+  </div>
+
+  <!-- 3.2 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1813DkYytv37kTdvAshbq5Leq1jLs1pji&sz=w1000" alt="">
+  </div>
+
+  <!-- 3.3 -->
+  <div class="item media audio">
+    <iframe src="https://drive.google.com/file/d/1ynkwY8jIMMrGtlbV5FLPyWW7BDCdi5SZ/preview"></iframe>
+  </div>
+
+  <!-- 3.4 -->
+  <div class="item card">
+    <p>Дуже часто, коли людина починає працювати над собою, вона несвідомо переносить у цей процес стару звичку — вимагати від себе більше.</p>
+    <p>«Треба швидше.» «Треба глибше.» «Треба вже перестати боятися.» «Інші справляються, а я ні.»</p>
+    <p>І знаєш що? Саме це часто заважає змінам. Страх не любить тиску. Коли ми починаємо себе ламати, змушувати або вимагати миттєвих результатів, нервова система сприймає це як ще одну загрозу. І замість полегшення ми отримуємо ще більше напруги.</p>
+    <p>Тому сьогодні я хочу дати тобі дозвіл не поспішати. Тобі не потрібно пройти цей практикум ідеально. Тобі не потрібно виконувати кожне завдання на 100%. Тобі не потрібно весь час бути сильною. Достатньо бути чесною із собою.</p>
+    <p>💚<br>Наше завдання не знайти всі причини страху за 14 занять. Не позбутися всіх страхів назавжди. І не стати іншою людиною.</p>
+    <p>Наше завдання значно простіше і водночас важливіше:<br>✔️ краще зрозуміти себе;<br>✔️ навчитися помічати свої реакції;<br>✔️ отримати інструменти допомоги собі;<br>✔️ зробити перші кроки до більшого спокою та свободи.</p>
+  </div>
+
+  <!-- 3.5 -->
+  <div class="item card">
+    <p><b>ЯК ЗРОЗУМІТИ, ЩО НА СЬОГОДНІ ТОБІ ДОСТАТНЬО?</b></p>
+    <p>Зазвичай тіло підказує саме. Якщо після практики ти відчуваєш спокій, легку втому або бажання побути наодинці — це нормально. Але якщо з'являється сильне виснаження, запаморочення, відчуття перевантаження, надмірна тривога або бажання негайно продовжувати й копати ще глибше — варто зробити паузу.</p>
+    <p>Іноді найкраще, що ми можемо зробити для себе, — не ще одна практика, а відпочинок.</p>
+    <p>💚<br>Наше завдання не знайти всі причини страху за 14 занять. Не позбутися всіх страхів назавжди. І не стати іншою людиною.</p>
+    <p>Наше завдання значно простіше і водночас важливіше:<br>✔️ краще зрозуміти себе;<br>✔️ навчитися помічати свої реакції;<br>✔️ отримати інструменти допомоги собі;<br>✔️ зробити перші кроки до більшого спокою та свободи.</p>
+  </div>
+
+  <!-- 3.6 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1URxlt2GjN-zBTPUcd0dSzRMT1mja-wQe&sz=w1000" alt="">
+  </div>
+
+  <!-- 3.7 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1XffvNkUtuj52apTFv3DJsv2I2YIbQbJ1&sz=w1000" alt="">
+  </div>
+
+  <!-- 3.8 -->
+  <div class="item prompt">
+    <h3>🌷 Зупинись на хвилинку</h3>
+    <p style="margin:0 0 14px;font-size:15px;">Ми вже кілька днів говоримо про страхи, спостерігаємо за тілом, знайомимося зі своїми реакціями. Сьогодні я пропоную не поспішати далі, а озирнутися назад і подивитися, що вже відбувається.</p>
+    <p style="margin:0 0 14px;font-size:15px;">Іноді нам здається, що нічого не змінилося. Але якщо придивитися уважніше, можна помітити маленькі зрушення.</p>
+    <p style="margin:0 0 10px;font-size:15px;">✍️ Напиши у чаті або у свій блокнот:</p>
+    <ul>
+      <li>Як ти зазвичай справляєшся зі страхом?</li>
+      <li>Що з того, що ти вже робиш, дійсно допомагає?</li>
+      <li>Що ти помітила у своєму тілі за ці кілька днів?</li>
+    </ul>
+    <p style="margin:14px 0 0;font-size:14px;color:var(--ink-soft);">Наприклад: я стала частіше помічати напругу; зрозуміла, де в тілі живе страх; почала звертати увагу на дихання; помітила, що тіло реагує раніше за думки. Не шукай правильних відповідей — тут важливе лише твоє спостереження.</p>
+  </div>
+
+  <!-- 3.9 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1Crw8r1zqzQIJO1BE-8wHJaOyhCVu-l2H&sz=w1000" alt="">
+  </div>
+
+  <!-- 3.10 -->
+  <div class="item media audio">
+    <iframe src="https://drive.google.com/file/d/1sKktRqwZ2g8p0C7H6ga86puTwqpY9-iL/preview"></iframe>
+  </div>
+
+  <!-- 3.11 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1JgsnEvGM0cDz113u1SvEG33xt3XuF6EJ&sz=w1000" alt="">
+  </div>
+
+  <!-- 3.12 -->
+  <div class="item prompt">
+    <h3>💚 Твоя фраза стабілізації</h3>
+    <p style="margin:0 0 14px;font-size:15px;">У кожної людини є фрази, які допомагають повертатися до себе в складний момент. Сьогодні я пропоную створити свою особисту фразу стабілізації — коротку фразу, яку можна сказати собі, коли з'являється страх, тривога або сильна напруга.</p>
+    <p style="margin:0 0 14px;font-size:15px;">Наприклад:<br>💚 Я зараз у безпеці.<br>💚 Це хвиля, вона пройде.<br>💚 Я можу витримати цей стан.<br>💚 Я вже справлялася раніше.<br>💚 Зараз я роблю все, що можу.<br>💚 Мені не потрібно вирішувати все одразу.</p>
+    <p style="margin:0;font-size:15px;">Спробуй знайти свою фразу. Ту, яка відгукується саме тобі. І запиши її. Нехай вона стане твоєю маленькою опорою на найближчі дні.</p>
+  </div>
+
+  <!-- 3.13 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1rZcKAiEDRfomWpcl0iMAiutx4n2sSvck&sz=w1000" alt="">
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- 3.14: HOMEWORK -->
+  <div class="item homework" id="homework-block">
+    <h3>Що я вже почала помічати інакше?</h3>
+    <p style="font-size:15px;color:#E3DCC8;margin:0 0 18px;">Страх часто змушує нас помічати лише те, що не виходить. Тому сьогодні я пропоную звернути увагу на зміни. Навіть якщо вони здаються зовсім маленькими.</p>
+
+    <p style="font-size:14px;color:#B9AE8C;margin:0 0 12px;">Можливо: я стала уважнішою до свого тіла; почала раніше помічати напругу; зрозуміла, що не всі страхи однакові; спробувала новий спосіб заспокоїтися; дозволила собі не поспішати. Маленькі зміни теж мають значення.</p>
+
+    <!-- 3.15: video that goes with the homework -->
+    <div class="media video" style="margin-bottom:18px;">
+      <video controls playsinline controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false;" src="https://radiotatv-pixel.github.io/fear-test/videos/3.15.mp4"></video>
+    </div>
+
+    <textarea id="reflection" placeholder="Напиши тут свою відповідь…"></textarea>
+    <button id="submit-btn" onclick="submitReflection()">💌 Відправити й розблокувати наступне заняття</button>
+    <div class="thankyou" id="thankyou">Дякуємо, що поділилась. Ми поруч. 💚</div>
+  </div>
+
+  <!-- NEXT DAY -->
+  <div id="next-day">
+    <div class="icon">🎉</div>
+    <h3>День 4 вже готовий</h3>
+    <p>Ти зробила ще один крок. Продовжимо, коли будеш готова.</p>
+    <a href="#" class="btn2">Перейти до Дня 4</a>
+  </div>
+
+</div>
+
+<script>
+function submitReflection() {
+  var text = document.getElementById('reflection').value.trim();
+  if (!text) {
+    alert('Напиши, будь ласка, кілька слів перед відправкою.');
+    return;
+  }
+  var btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Надсилаємо…';
+
+  // ПОКИ ЩО ЛОКАЛЬНО, ДЛЯ ПЕРЕГЛЯДУ.
+  // Коли погодимо вигляд — тут буде такий самий fetch() до Apps Script,
+  // як у тесті (handleTelegramUpdate/appendResponse), просто без Telegram.
+  setTimeout(function () {
+    document.getElementById('thankyou').classList.add('show');
+    document.getElementById('reflection').style.display = 'none';
+    btn.style.display = 'none';
+
+    setTimeout(function () {
+      document.getElementById('next-day').classList.add('show');
+      document.getElementById('next-day').scrollIntoView({behavior: 'smooth', block: 'center'});
+    }, 1200);
+  }, 600);
+}
+
+// Захист від випадкового завантаження — блокуємо праву кнопку миші на фото
+document.addEventListener('contextmenu', function (e) {
+  if (e.target.tagName === 'IMG') e.preventDefault();
+});
+</script>
+
+</body>
+
+</html>
