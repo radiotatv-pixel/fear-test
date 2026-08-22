@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>День 12 — По той бік страху</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4EFE3;
+    --bg-deep:#2E3F33;
+    --ink:#28241F;
+    --ink-soft:#5B564C;
+    --gold:#B4863A;
+    --rose:#A15D4C;
+    --line:#DCD3BE;
+    --card:#FBF8F1;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:0 20px 120px;}
+
+  /* HERO */
+  .hero{
+    background:var(--bg-deep);
+    color:#F4EFE3;
+    padding:56px 20px 64px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(circle at 50% 0%, rgba(180,134,58,0.25), transparent 60%);
+  }
+  .hero-inner{position:relative;max-width:560px;margin:0 auto;}
+  .day-badge{
+    display:inline-block;
+    font-family:'Inter',sans-serif;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#D9C48B;
+    border:1px solid rgba(217,196,139,0.5);
+    padding:6px 16px;
+    border-radius:999px;
+    margin-bottom:22px;
+  }
+  .hero h1{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:38px;
+    line-height:1.15;
+    margin:0 0 14px;
+  }
+  .hero p{
+    font-size:15px;
+    color:#CFC7B4;
+    margin:0;
+  }
+
+  /* SECTIONS */
+  .item{margin-top:34px;}
+  .media{
+    border-radius:16px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    background:#000;
+  }
+  .media img{display:block;width:100%;height:auto;}
+  .media iframe{display:block;width:100%;border:0;border-radius:16px;}
+  .media video{display:block;width:100%;height:auto;border-radius:16px;}
+  .media.video iframe{aspect-ratio:9/16;height:auto;}
+  .media.video video{aspect-ratio:9/16;height:auto;object-fit:cover;}
+  .media.audio iframe{height:260px;background:var(--card);}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:26px 24px;
+  }
+  .card .who{
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:12px;
+  }
+  .card .who .num{
+    font-family:'Fraunces',serif;
+    font-size:13px;
+    color:var(--gold);
+    letter-spacing:.05em;
+  }
+  .card .who .name{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:19px;
+  }
+  .card .role{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:-8px 0 14px;
+  }
+  .card p{margin:0 0 12px;font-size:15.5px;}
+  .card p:last-child{margin-bottom:0;}
+
+  .prompt{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-left:3px solid var(--gold);
+    border-radius:12px;
+    padding:24px;
+  }
+  .prompt h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:19px;
+    margin:0 0 12px;
+  }
+  .prompt ul{margin:0;padding-left:0;list-style:none;}
+  .prompt li{margin-bottom:8px;font-size:15px;}
+
+  .care{
+    background:#EFE9D8;
+    border-radius:16px;
+    padding:24px;
+  }
+  .care h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:18px;
+    margin:0 0 14px;
+  }
+  .care ol{margin:0;padding-left:20px;}
+  .care li{margin-bottom:8px;font-size:15px;}
+
+  /* HOMEWORK */
+  .homework{
+    background:var(--bg-deep);
+    color:#F4EFE3;
+    border-radius:18px;
+    padding:30px 26px;
+  }
+  .homework h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:21px;
+    margin:0 0 16px;
+    color:#F4EFE3;
+  }
+  .homework ul{margin:0 0 18px;padding-left:0;list-style:none;}
+  .homework li{margin-bottom:9px;font-size:15px;color:#E3DCC8;}
+  .homework .note{font-size:13.5px;color:#B9AE8C;margin:0 0 20px;}
+  .homework textarea{
+    width:100%;
+    min-height:110px;
+    background:#3A4B3E;
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:12px;
+    color:#F4EFE3;
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    padding:14px;
+    resize:vertical;
+  }
+  .homework textarea::placeholder{color:#9AA894;}
+  .homework button{
+    margin-top:14px;
+    width:100%;
+    background:var(--gold);
+    color:#2A1F0F;
+    border:none;
+    border-radius:12px;
+    padding:15px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:15px;
+    cursor:pointer;
+    transition:opacity .2s;
+  }
+  .homework button:hover{opacity:.9;}
+  .homework button:disabled{opacity:.5;cursor:not-allowed;}
+
+  /* NEXT DAY REVEAL */
+  #next-day{
+    display:none;
+    text-align:center;
+    padding:44px 24px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+  }
+  #next-day.show{display:block;animation:fadeUp .5s ease-out;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  #next-day .icon{font-size:34px;margin-bottom:10px;}
+  #next-day h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:22px;
+    margin:0 0 10px;
+  }
+  #next-day p{color:var(--ink-soft);font-size:15px;margin:0 0 20px;}
+  #next-day .btn2{
+    display:inline-block;
+    background:var(--bg-deep);
+    color:#F4EFE3;
+    padding:14px 28px;
+    border-radius:12px;
+    font-weight:600;
+    font-size:15px;
+    text-decoration:none;
+  }
+
+  .thankyou{
+    display:none;
+    text-align:center;
+    padding:20px 0 6px;
+    color:var(--ink-soft);
+    font-size:14px;
+  }
+  .thankyou.show{display:block;}
+
+  .divider{
+    text-align:center;
+    color:var(--gold);
+    font-size:18px;
+    margin:38px 0;
+  }
+
+  /* Захист від випадкового завантаження медіа */
+  img, video {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    pointer-events: auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="day-badge">День 12 з 14</div>
+    <h1>По той бік страху</h1>
+    <p>Сьогодні дізнаємось, на якому рівні живе наш страх — думки, емоції чи тіло.</p>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- 12.1 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1mVH8LNEpEocT0UwAf1dU9k0pqIw_DCYF&sz=w1000" alt="">
+  </div>
+
+  <!-- 12.2 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1KbdVNzp-kYPVPARL4sVCcqW2Se9mOfdi&sz=w1000" alt="">
+  </div>
+
+  <!-- 12.3 -->
+  <div class="item card">
+    <p>Знайома історія: «Я ж розумію, що боятися нічого… Чому ж мені все одно страшно?»</p>
+    <p>Сьогодні розберемо, чому деякі страхи не зникають тільки застосуванням вашої сили волі. По-перше, тому що страх — це не лише думка. Це реакція, яка може жити одразу на кількох рівнях.</p>
+    <p>🧠 <b>1. Рівень думок</b><br>Тут живуть наші переконання: «Я не впораюся.» «Світ небезпечний.» «Зі мною обов'язково станеться щось погане.» Саме з цим рівнем найчастіше працює когнітивно-поведінкова терапія.</p>
+    <p>❤️ <b>2. Рівень емоцій</b><br>Навіть якщо ви вже переконали себе, що небезпеки немає, емоція може залишатися. Це як після страшного фільму: ви знаєте, що все вигадано, але серце ще якийсь час б'ється швидше.</p>
+    <p>💪 <b>3. Рівень тіла</b><br>Цей страх записується не лише в пам'яті, а й у реакціях організму. Напружені плечі. Стиснута щелепа. Поверхневе дихання. Прискорене серцебиття. Тіло ніби продовжує чекати небезпеку, навіть коли вона вже минула.</p>
+  </div>
+
+  <!-- 12.4 -->
+  <div class="item card">
+    <p><b>4. Рівень захисних механізмів</b></p>
+    <p>Іноді страх виконує важливу функцію. Він утримує нас від ситуацій, які психіка поки що вважає надто болючими. Саме тому деякі страхи не «ламаються» силою волі. Тим більше що ці захисні механізми часто сформовані навіть не вами і вашим досвідом, а досвідом ваших далеких предків, яких ви навіть не знали.</p>
+    <p>Чому ж буває складно працювати зі страхом самостійно? Тому що ми одночасно є і дослідником, і людиною, яка переживає цей страх. Коли емоції стають дуже сильними, об'єктивно подивитися на ситуацію майже неможливо.</p>
+    <p>Часто людина починає занурюватися в болючі спогади швидше, ніж її нервова система готова їх витримати. В цьому випадку замість позбавлення отримуємо чергову панічну атаку, або інший прояв страху. В цьому випадку навіть власне фахівцю потрібен супровід.</p>
+    <p>Спеціаліст тут допомагає створити умови, у яких психіка відчуває достатньо безпеки, щоб поступово зустрітися зі страхом та його причинами. І, по суті, хороша терапія — це якраз про те, щоб допомогти людині навчитися проживати страх без руйнування себе.</p>
+    <p>А найважливіше, це: якщо страх не зникає силою волі, це не означає, що ви слабкі. Це означає, що ваша нервова система потребує не боротьби, яка викликає додаткову втому та виснаження, а підтримки, часу і безпечного простору для змін.</p>
+  </div>
+
+  <!-- 12.5 -->
+  <div class="item media audio">
+    <iframe src="https://drive.google.com/file/d/1yQrJyyt6WqOanw_44RE33ZAmdIVFZ2UF/preview"></iframe>
+  </div>
+
+  <!-- 12.6 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1O38vPH7_4S7TOf-aeW3BRFpYhNNB4hDn&sz=w1000" alt="">
+  </div>
+
+  <!-- 12.7 -->
+  <div class="item media audio">
+    <iframe src="https://drive.google.com/file/d/10G04iU815lQ7IHsbuZ9v3HRxRYQexJ2C/preview"></iframe>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- 12.8: FIRST REFLECTION (saves, no unlock) -->
+  <div class="item homework">
+    <h3>Практика «На якому рівні живе мій страх?»</h3>
+    <p style="font-size:15px;color:#E3DCC8;margin:0 0 18px;">⏳ Вам знадобиться 10–15 хвилин часу. Обов'язково запишіть всі свої відповіді. Це допоможе у особистій роботі з вашими страхами.</p>
+
+    <p style="font-size:15px;color:#E3DCC8;margin:0 0 6px;"><b>Крок 1.</b> Виберіть один конкретний страх. Наприклад: боюся відносин; боюся відмови; боюся залишитися сама; боюся води; боюся захворіти. Запишіть його одним реченням: «Я боюся...»</p>
+    <p style="font-size:15px;color:#E3DCC8;margin:0 0 6px;"><b>Крок 2.</b> Перевіряємо рівень думок. Що саме говорить мені мозок? Запишіть першу думку, яка виникла.</p>
+    <p style="font-size:15px;color:#E3DCC8;margin:0 0 6px;"><b>Крок 3.</b> Перевіряємо рівень емоцій. Закрийте очі. Уявіть ситуацію, якої боїтеся. Що я зараз відчуваю?</p>
+    <p style="font-size:15px;color:#E3DCC8;margin:0 0 6px;"><b>Крок 4.</b> Перевіряємо рівень тіла. Де живе цей страх? Клубок у горлі? Стискання грудей? Важкість у животі?</p>
+    <p style="font-size:15px;color:#E3DCC8;margin:0 0 6px;"><b>Крок 5.</b> Перевіряємо захисний рівень. Якщо цей страх завтра повністю зникне... що мені доведеться зробити?</p>
+    <p style="font-size:15px;color:#E3DCC8;margin:0 0 18px;"><b>Крок 6.</b> Підведіть підсумок. Оцініть кожен рівень за шкалою від 0 до 10: 🧠 Думки _/10, ❤️ Емоції _/10, 💪 Тіло _/10, 🛡 Захисна функція _/10. Подивіться, де цифра найбільша — саме звідти і варто починати роботу.</p>
+
+    <textarea id="reflection1" placeholder="Напиши тут відповіді на всі 6 кроків…"></textarea>
+    <button id="submit-btn1" onclick="submitFirst()">💌 Відправити відповідь</button>
+    <div class="thankyou" id="thankyou1">Дякуємо, що поділилась. Записали. 💚</div>
+  </div>
+
+  <!-- 12.9 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1fJFosevXWpn2qsh5raIzuDfuLbbwIWqJ&sz=w1000" alt="">
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- 12.10: SECOND REFLECTION (saves + unlocks) -->
+  <div class="item homework" id="homework-block">
+    <h3>На цьому етапі — похваліть себе</h3>
+    <p style="font-size:15px;color:#E3DCC8;margin:0 0 18px;">Ви зробили величезну роботу над собою та зі своїми страхами. Ви навчилися визначати: де живе страх; який його тригер; які автоматичні думки він запускає; як реагує тіло; який ресурс допомагає; яка техніка працює саме для вас.</p>
+
+    <p style="font-size:15px;color:#E3DCC8;margin:0 0 18px;">Ви виходите не просто з набором вправ, а зі своєю власною інструкцією роботи зі страхом. Часто вже цього достатньо, щоб страх перестав здаватися чимось величезним і некерованим.</p>
+
+    <p style="font-size:15px;color:#E3DCC8;margin:0 0 18px;">Водночас ми пам'ятаємо, що деякі страхи мають глибоке коріння — вони можуть бути пов'язані з травматичним досвідом, тривалим стресом або давніми захисними механізмами психіки. У таких випадках самодопомога може стати чудовим початком, але не завжди достатнім рішенням.</p>
+
+    <p class="note">Якщо ви відчуваєте, що страх продовжує керувати вашим життям, ви можете обрати спеціаліста з Гіпноковену, що буде супроводжувати вас на шляху позбавлення. Пам'ятайте: просити про допомогу — це не прояв слабкості. Зазвичай це найсміливіше рішення, яке відкриває шлях до справжніх змін. ❤️</p>
+
+    <!-- 12.10: video that goes with this closing -->
+    <div class="media video" style="margin-bottom:18px;">
+      <video controls playsinline controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false;" src="https://radiotatv-pixel.github.io/fear-test/videos/12.10.mp4"></video>
+    </div>
+
+    <textarea id="reflection" placeholder="Напиши тут свою відповідь…"></textarea>
+    <button id="submit-btn" onclick="submitReflection()">💌 Відправити й розблокувати наступне заняття</button>
+    <div class="thankyou" id="thankyou">Дякуємо, що поділилась. Ми поруч. 💚</div>
+  </div>
+
+  <!-- NEXT DAY -->
+  <div id="next-day">
+    <div class="icon">🎉</div>
+    <h3>День 13 вже готовий</h3>
+    <p>Ти зробила ще один крок. Продовжимо, коли будеш готова.</p>
+    <a href="#" class="btn2">Перейти до Дня 13</a>
+  </div>
+
+</div>
+
+<script>
+function submitFirst() {
+  var text = document.getElementById('reflection1').value.trim();
+  if (!text) {
+    alert('Напиши, будь ласка, кілька слів перед відправкою.');
+    return;
+  }
+  var btn = document.getElementById('submit-btn1');
+  btn.disabled = true;
+  btn.textContent = 'Надсилаємо…';
+
+  // ПОКИ ЩО ЛОКАЛЬНО, ДЛЯ ПЕРЕГЛЯДУ.
+  // Коли підключимо Таблицю — тут буде fetch() як для другої форми, але без відкриття next-day.
+  setTimeout(function () {
+    document.getElementById('thankyou1').classList.add('show');
+    document.getElementById('reflection1').style.display = 'none';
+    btn.style.display = 'none';
+  }, 600);
+}
+
+function submitReflection() {
+  var text = document.getElementById('reflection').value.trim();
+  if (!text) {
+    alert('Напиши, будь ласка, кілька слів перед відправкою.');
+    return;
+  }
+  var btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Надсилаємо…';
+
+  setTimeout(function () {
+    document.getElementById('thankyou').classList.add('show');
+    document.getElementById('reflection').style.display = 'none';
+    btn.style.display = 'none';
+
+    setTimeout(function () {
+      document.getElementById('next-day').classList.add('show');
+      document.getElementById('next-day').scrollIntoView({behavior: 'smooth', block: 'center'});
+    }, 1200);
+  }, 600);
+}
+</script>
+
+</body>
+</html>
