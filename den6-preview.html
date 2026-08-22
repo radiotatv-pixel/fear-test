@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>День 6 — По той бік страху</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4EFE3;
+    --bg-deep:#2E3F33;
+    --ink:#28241F;
+    --ink-soft:#5B564C;
+    --gold:#B4863A;
+    --rose:#A15D4C;
+    --line:#DCD3BE;
+    --card:#FBF8F1;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:0 20px 120px;}
+
+  /* HERO */
+  .hero{
+    background:var(--bg-deep);
+    color:#F4EFE3;
+    padding:56px 20px 64px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(circle at 50% 0%, rgba(180,134,58,0.25), transparent 60%);
+  }
+  .hero-inner{position:relative;max-width:560px;margin:0 auto;}
+  .day-badge{
+    display:inline-block;
+    font-family:'Inter',sans-serif;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#D9C48B;
+    border:1px solid rgba(217,196,139,0.5);
+    padding:6px 16px;
+    border-radius:999px;
+    margin-bottom:22px;
+  }
+  .hero h1{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:38px;
+    line-height:1.15;
+    margin:0 0 14px;
+  }
+  .hero p{
+    font-size:15px;
+    color:#CFC7B4;
+    margin:0;
+  }
+
+  /* SECTIONS */
+  .item{margin-top:34px;}
+  .media{
+    border-radius:16px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    background:#000;
+  }
+  .media img{display:block;width:100%;height:auto;}
+  .media iframe{display:block;width:100%;border:0;border-radius:16px;}
+  .media video{display:block;width:100%;height:auto;border-radius:16px;}
+  .media.video iframe{aspect-ratio:9/16;height:auto;}
+  .media.video video{aspect-ratio:9/16;height:auto;object-fit:cover;}
+  .media.audio iframe{height:260px;background:var(--card);}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:26px 24px;
+  }
+  .card .who{
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:12px;
+  }
+  .card .who .num{
+    font-family:'Fraunces',serif;
+    font-size:13px;
+    color:var(--gold);
+    letter-spacing:.05em;
+  }
+  .card .who .name{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:19px;
+  }
+  .card .role{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:-8px 0 14px;
+  }
+  .card p{margin:0 0 12px;font-size:15.5px;}
+  .card p:last-child{margin-bottom:0;}
+
+  .prompt{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-left:3px solid var(--gold);
+    border-radius:12px;
+    padding:24px;
+  }
+  .prompt h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:19px;
+    margin:0 0 12px;
+  }
+  .prompt ul{margin:0;padding-left:0;list-style:none;}
+  .prompt li{margin-bottom:8px;font-size:15px;}
+
+  .care{
+    background:#EFE9D8;
+    border-radius:16px;
+    padding:24px;
+  }
+  .care h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:18px;
+    margin:0 0 14px;
+  }
+  .care ol{margin:0;padding-left:20px;}
+  .care li{margin-bottom:8px;font-size:15px;}
+
+  /* HOMEWORK */
+  .homework{
+    background:var(--bg-deep);
+    color:#F4EFE3;
+    border-radius:18px;
+    padding:30px 26px;
+  }
+  .homework h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:21px;
+    margin:0 0 16px;
+    color:#F4EFE3;
+  }
+  .homework ul{margin:0 0 18px;padding-left:0;list-style:none;}
+  .homework li{margin-bottom:9px;font-size:15px;color:#E3DCC8;}
+  .homework .note{font-size:13.5px;color:#B9AE8C;margin:0 0 20px;}
+  .homework textarea{
+    width:100%;
+    min-height:110px;
+    background:#3A4B3E;
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:12px;
+    color:#F4EFE3;
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    padding:14px;
+    resize:vertical;
+  }
+  .homework textarea::placeholder{color:#9AA894;}
+  .homework button{
+    margin-top:14px;
+    width:100%;
+    background:var(--gold);
+    color:#2A1F0F;
+    border:none;
+    border-radius:12px;
+    padding:15px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:15px;
+    cursor:pointer;
+    transition:opacity .2s;
+  }
+  .homework button:hover{opacity:.9;}
+  .homework button:disabled{opacity:.5;cursor:not-allowed;}
+
+  /* NEXT DAY REVEAL */
+  #next-day{
+    display:none;
+    text-align:center;
+    padding:44px 24px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+  }
+  #next-day.show{display:block;animation:fadeUp .5s ease-out;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  #next-day .icon{font-size:34px;margin-bottom:10px;}
+  #next-day h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:22px;
+    margin:0 0 10px;
+  }
+  #next-day p{color:var(--ink-soft);font-size:15px;margin:0 0 20px;}
+  #next-day .btn2{
+    display:inline-block;
+    background:var(--bg-deep);
+    color:#F4EFE3;
+    padding:14px 28px;
+    border-radius:12px;
+    font-weight:600;
+    font-size:15px;
+    text-decoration:none;
+  }
+
+  .thankyou{
+    display:none;
+    text-align:center;
+    padding:20px 0 6px;
+    color:var(--ink-soft);
+    font-size:14px;
+  }
+  .thankyou.show{display:block;}
+
+  .divider{
+    text-align:center;
+    color:var(--gold);
+    font-size:18px;
+    margin:38px 0;
+  }
+
+  /* Захист від випадкового завантаження медіа */
+  img, video {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    pointer-events: auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="day-badge">День 6 з 14</div>
+    <h1>По той бік страху</h1>
+    <p>Сьогодні тренуємо навичку спостерігача — без боротьби, без оцінки.</p>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- 6.1 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1s0dvRoAkhZN1N_S5ZADby8hXHIanCTuf&sz=w1000" alt="">
+  </div>
+
+  <!-- 6.2 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1gVD_VLUWWwbH_70MM5JQoHNL8PRZJ8mC&sz=w1000" alt="">
+  </div>
+
+  <!-- 6.3 -->
+  <div class="item media audio">
+    <iframe src="https://drive.google.com/file/d/1aAFAgpm1cJ4jvmDB_TPDtwCrMnMk_QW3/preview"></iframe>
+  </div>
+
+  <!-- 6.4 -->
+  <div class="item card">
+    <p><b>Тема дня: Навчитись помічати себе, а не боротися зі страхом.</b></p>
+    <p>Перші кілька днів ми знайомилися зі своїми страхами, спостерігали за ними, працювали з тілом, думками та емоціями. Сьогодні ми не будемо нічого «виправляти». Чому? Тому що будь-які зміни потребують часу.</p>
+    <p>Наша нервова система схожа на землю після дощу. Якщо постійно її перекопувати, нічого не виросте. Але якщо дати їй трохи спокою — вона сама починає відновлюватися.</p>
+    <p>Страх не живе окремо від нас. Він проявляється хвилями: то посилюється, то слабшає, іноді майже зникає. Більшість людей цього навіть не помічають. Їм здається: «Я постійно тривожуся.» Насправді це не так. Навіть найсильніша тривога має моменти, коли вона відступає.</p>
+    <p>І саме сьогодні ми будемо тренувати дуже важливу навичку — спостерігача. Спостерігач не оцінює. Не критикує. Не сварить себе. Він просто помічає: «Зараз мені страшно.» «Зараз стало трохи легше.» «Ось ця розмова мене заспокоїла.» «Після прогулянки я відчула більше опори.»</p>
+    <p>Саме так поступово повертається відчуття контролю над власним життям. Не через боротьбу. А через усвідомленість.</p>
+    <p><b>Що сьогодні важливо</b><br>Сьогодні не потрібно змушувати себе бути сміливими. Не потрібно спеціально викликати страх. Не потрібно виконувати складні практики. Достатньо просто бути уважними до себе. Це теж робота. І дуже важлива.</p>
+  </div>
+
+  <!-- 6.5 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1mP_UUQMBoy8l0CBho_qomAgm4Tu84k3U&sz=w1000" alt="">
+  </div>
+
+  <!-- 6.6 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1ZU0ZsKSCxCNBQA9FUt8d_2YxpN_3GxMj&sz=w1000" alt="">
+  </div>
+
+  <!-- 6.7 -->
+  <div class="item prompt">
+    <h3>Щоденник спостережень</h3>
+    <p style="margin:0 0 14px;font-size:15px;">Сьогодні протягом дня спостерігайте за собою. Щоразу, коли помічаєте страх або тривогу, не поспішайте щось змінювати. Просто дайте відповідь на кілька запитань.</p>
+    <ul>
+      <li>✔ Коли сьогодні з'явився страх?</li>
+      <li>✔ Що його запустило?</li>
+      <li>✔ Наскільки сильним він був (0–10)?</li>
+      <li>✔ Де в тілі я його відчула?</li>
+      <li>✔ Що сталося потім?</li>
+      <li>✔ Коли стало легше?</li>
+      <li>✔ Що мені допомогло?</li>
+    </ul>
+    <p style="margin:14px 0 0;font-size:14px;color:var(--ink-soft);">Наприкінці дня перечитайте свої записи. Можливо, ви вперше помітите, що страх не триває вічно. Він приходить. І він минає.</p>
+  </div>
+
+  <!-- 6.8 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1WRK83pL6YREvzVXH_CBIdmU8tBUY2IvP&sz=w1000" alt="">
+  </div>
+
+  <!-- 6.9 -->
+  <div class="item card">
+    <p><b>Тілесна практика «Струшування напруги»</b></p>
+    <p>Коли ми переживаємо страх, організм готується до реакції «бий або тікай». Якщо ця реакція не завершується дією, напруга може залишатися в тілі. Тому сьогодні ми допоможемо тілу природно завершити цей цикл.</p>
+    <p><b>Як виконувати:</b><br>Встаньте рівно. Розслабте плечі. Почніть легко струшувати кистями рук. Потім додайте передпліччя. Потім плечі. Струсіть ноги. Дозвольте легкому руху пройти через усе тіло.</p>
+    <p>Не потрібно робити це інтенсивно. Достатньо 1–2 хвилин м'яких рухів. Після цього зробіть три повільні вдихи та видихи й зверніть увагу на свої відчуття.</p>
+  </div>
+
+  <!-- 6.10 -->
+  <div class="item media video">
+    <video controls playsinline controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false;" src="https://radiotatv-pixel.github.io/fear-test/videos/6.10.mp4"></video>
+  </div>
+
+  <!-- 6.11 -->
+  <div class="item media video">
+    <video controls playsinline controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false;" src="https://radiotatv-pixel.github.io/fear-test/videos/6.11.mp4"></video>
+  </div>
+
+  <!-- 6.12 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1fkgWDoibJyel4bfXo7DrgjY93sTDja1S&sz=w1000" alt="">
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- 6.13: HOMEWORK -->
+  <div class="item homework" id="homework-block">
+    <h3>Невеликий підсумок дня</h3>
+    <p style="font-size:15px;color:#E3DCC8;margin:0 0 18px;">Сьогодні ви вже протягом дня спостерігали за своїми реакціями та заповнювали щоденник. Тепер настав час зробити невеликий підсумок. Поверніться до своїх записів і дайте собі відповіді на три запитання:</p>
+
+    <ul>
+      <li>💚 Що нового я сьогодні помітила про свій страх?</li>
+      <li>💚 Який момент цього дня став для мене найважливішим або найціннішим?</li>
+      <li>💚 Що допомагало мені відчути хоча б трохи більше спокою та опори?</li>
+    </ul>
+
+    <p style="font-size:15px;color:#E3DCC8;margin:14px 0 0;">📩 Для відкриття наступного дня закінчіть сьогодні одну фразу: «Сьогодні я зрозуміла, що мій страх…»</p>
+
+    <p class="note">Пам'ятайте: сьогодні не існує правильних чи неправильних відповідей. Нам важливо, щоб ви були чесними із собою.</p>
+
+    <!-- 6.14: video that goes with the homework -->
+    <div class="media video" style="margin-bottom:18px;">
+      <video controls playsinline controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false;" src="https://radiotatv-pixel.github.io/fear-test/videos/6.14.mp4"></video>
+    </div>
+
+    <textarea id="reflection" placeholder="Напиши тут свою відповідь…"></textarea>
+    <button id="submit-btn" onclick="submitReflection()">💌 Відправити й розблокувати наступне заняття</button>
+    <div class="thankyou" id="thankyou">Дякуємо, що поділилась. Ми поруч. 💚</div>
+  </div>
+
+  <!-- NEXT DAY -->
+  <div id="next-day">
+    <div class="icon">🎉</div>
+    <h3>День 7 вже готовий</h3>
+    <p>Ти зробила ще один крок. Продовжимо, коли будеш готова.</p>
+    <a href="#" class="btn2">Перейти до Дня 7</a>
+  </div>
+
+</div>
+
+<script>
+function submitReflection() {
+  var text = document.getElementById('reflection').value.trim();
+  if (!text) {
+    alert('Напиши, будь ласка, кілька слів перед відправкою.');
+    return;
+  }
+  var btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Надсилаємо…';
+
+  // ПОКИ ЩО ЛОКАЛЬНО, ДЛЯ ПЕРЕГЛЯДУ.
+  // Коли погодимо вигляд — тут буде такий самий fetch() до Apps Script,
+  // як у тесті (handleTelegramUpdate/appendResponse), просто без Telegram.
+  setTimeout(function () {
+    document.getElementById('thankyou').classList.add('show');
+    document.getElementById('reflection').style.display = 'none';
+    btn.style.display = 'none';
+
+    setTimeout(function () {
+      document.getElementById('next-day').classList.add('show');
+      document.getElementById('next-day').scrollIntoView({behavior: 'smooth', block: 'center'});
+    }, 1200);
+  }, 600);
+}
+
+// Захист від випадкового завантаження — блокуємо праву кнопку миші на фото
+document.addEventListener('contextmenu', function (e) {
+  if (e.target.tagName === 'IMG') e.preventDefault();
+});
+</script>
+
+</body>
+
+</html>
