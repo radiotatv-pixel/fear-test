@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>День 8 — По той бік страху</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4EFE3;
+    --bg-deep:#2E3F33;
+    --ink:#28241F;
+    --ink-soft:#5B564C;
+    --gold:#B4863A;
+    --rose:#A15D4C;
+    --line:#DCD3BE;
+    --card:#FBF8F1;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:0 20px 120px;}
+
+  /* HERO */
+  .hero{
+    background:var(--bg-deep);
+    color:#F4EFE3;
+    padding:56px 20px 64px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(circle at 50% 0%, rgba(180,134,58,0.25), transparent 60%);
+  }
+  .hero-inner{position:relative;max-width:560px;margin:0 auto;}
+  .day-badge{
+    display:inline-block;
+    font-family:'Inter',sans-serif;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#D9C48B;
+    border:1px solid rgba(217,196,139,0.5);
+    padding:6px 16px;
+    border-radius:999px;
+    margin-bottom:22px;
+  }
+  .hero h1{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:38px;
+    line-height:1.15;
+    margin:0 0 14px;
+  }
+  .hero p{
+    font-size:15px;
+    color:#CFC7B4;
+    margin:0;
+  }
+
+  /* SECTIONS */
+  .item{margin-top:34px;}
+  .media{
+    border-radius:16px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    background:#000;
+  }
+  .media img{display:block;width:100%;height:auto;}
+  .media iframe{display:block;width:100%;border:0;border-radius:16px;}
+  .media video{display:block;width:100%;height:auto;border-radius:16px;}
+  .media.video iframe{aspect-ratio:9/16;height:auto;}
+  .media.video video{aspect-ratio:9/16;height:auto;object-fit:cover;}
+  .media.audio iframe{height:260px;background:var(--card);}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:26px 24px;
+  }
+  .card .who{
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:12px;
+  }
+  .card .who .num{
+    font-family:'Fraunces',serif;
+    font-size:13px;
+    color:var(--gold);
+    letter-spacing:.05em;
+  }
+  .card .who .name{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:19px;
+  }
+  .card .role{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:-8px 0 14px;
+  }
+  .card p{margin:0 0 12px;font-size:15.5px;}
+  .card p:last-child{margin-bottom:0;}
+
+  .prompt{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-left:3px solid var(--gold);
+    border-radius:12px;
+    padding:24px;
+  }
+  .prompt h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:19px;
+    margin:0 0 12px;
+  }
+  .prompt ul{margin:0;padding-left:0;list-style:none;}
+  .prompt li{margin-bottom:8px;font-size:15px;}
+
+  .care{
+    background:#EFE9D8;
+    border-radius:16px;
+    padding:24px;
+  }
+  .care h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:18px;
+    margin:0 0 14px;
+  }
+  .care ol{margin:0;padding-left:20px;}
+  .care li{margin-bottom:8px;font-size:15px;}
+
+  /* HOMEWORK */
+  .homework{
+    background:var(--bg-deep);
+    color:#F4EFE3;
+    border-radius:18px;
+    padding:30px 26px;
+  }
+  .homework h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:21px;
+    margin:0 0 16px;
+    color:#F4EFE3;
+  }
+  .homework ul{margin:0 0 18px;padding-left:0;list-style:none;}
+  .homework li{margin-bottom:9px;font-size:15px;color:#E3DCC8;}
+  .homework .note{font-size:13.5px;color:#B9AE8C;margin:0 0 20px;}
+  .homework textarea{
+    width:100%;
+    min-height:110px;
+    background:#3A4B3E;
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:12px;
+    color:#F4EFE3;
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    padding:14px;
+    resize:vertical;
+  }
+  .homework textarea::placeholder{color:#9AA894;}
+  .homework button{
+    margin-top:14px;
+    width:100%;
+    background:var(--gold);
+    color:#2A1F0F;
+    border:none;
+    border-radius:12px;
+    padding:15px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:15px;
+    cursor:pointer;
+    transition:opacity .2s;
+  }
+  .homework button:hover{opacity:.9;}
+  .homework button:disabled{opacity:.5;cursor:not-allowed;}
+
+  /* NEXT DAY REVEAL */
+  #next-day{
+    display:none;
+    text-align:center;
+    padding:44px 24px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+  }
+  #next-day.show{display:block;animation:fadeUp .5s ease-out;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  #next-day .icon{font-size:34px;margin-bottom:10px;}
+  #next-day h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:22px;
+    margin:0 0 10px;
+  }
+  #next-day p{color:var(--ink-soft);font-size:15px;margin:0 0 20px;}
+  #next-day .btn2{
+    display:inline-block;
+    background:var(--bg-deep);
+    color:#F4EFE3;
+    padding:14px 28px;
+    border-radius:12px;
+    font-weight:600;
+    font-size:15px;
+    text-decoration:none;
+  }
+
+  .thankyou{
+    display:none;
+    text-align:center;
+    padding:20px 0 6px;
+    color:var(--ink-soft);
+    font-size:14px;
+  }
+  .thankyou.show{display:block;}
+
+  .divider{
+    text-align:center;
+    color:var(--gold);
+    font-size:18px;
+    margin:38px 0;
+  }
+
+  /* Захист від випадкового завантаження медіа */
+  img, video {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    pointer-events: auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="day-badge">День 8 з 14</div>
+    <h1>По той бік страху</h1>
+    <p>Сьогодні дізнаємось, що таке ресурсний стан і як його поповнювати.</p>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- 8.1 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1fny9qJdrlc7bR3uYkCrvr2Hu6vjNRzcz&sz=w1000" alt="">
+  </div>
+
+  <!-- 8.2 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=10DKsgzSDpfyvfmo-Z87M8wUWVKS0aiXP&sz=w1000" alt="">
+  </div>
+
+  <!-- 8.3 -->
+  <div class="item media audio">
+    <iframe src="https://drive.google.com/file/d/1SvjhA-WJrxqFewjNlu9NiOA6zO7uAg-L/preview"></iframe>
+  </div>
+
+  <!-- 8.4 -->
+  <div class="item card">
+    <p><b>🌿 Що таке ресурсний стан і чому без нього психіка не дає працювати зі страхами?</b></p>
+    <p>Уявіть, що вам потрібно підняти важку шафу. Чи зможете ви це зробити, якщо три доби не спали, нічого не їли й ледве стоїте на ногах? Швидше за все — ні. Із психікою все працює так само.</p>
+    <p>Ресурсний стан — це коли у нервової системи достатньо сил, щоб справлятися зі складними переживаннями. Коли ресурсу мало, мозок думає не про розвиток, а про безпеку. Той самий режим виживання, про який так багато вже сказано.</p>
+    <p>Саме тому люди часто говорять: «Я розумію, що треба працювати зі своїми страхами… але не можу навіть почати.» І це нормальний природній захисний механізм тіла.</p>
+    <p>🧠 Якщо нервова система вже перевантажена, вона не дозволить вам занурюватися ще глибше в біль. Для неї головне завдання — зберегти рівновагу. Саме тому професійна терапія майже завжди починається зі створення відчуття безпеки та ресурсу.</p>
+    <p>🌿 Що допомагає накопичити ресурс?<br>✔️ повноцінний сон;<br>✔️ регулярне харчування;<br>✔️ рух і дихальні практики;<br>✔️ відчуття опори в тілі;<br>✔️ підтримка близьких;<br>✔️ маленькі щоденні перемоги.</p>
+    <p>І лише коли нервова система перестає жити в режимі постійної тривоги, вона поступово відкривається до глибинної внутрішньої роботи.</p>
+    <p>❤️ Запам'ятайте головне: Ресурс — це фундамент. Спочатку ми допомагаємо собі відчути безпеку. І тільки потім починаємо працювати зі страхами, травмами та болючими спогадами. Саме так психіка відчуває: «Тепер у мене достатньо сил, щоб шукати необхідних для розвитку змін.»</p>
+  </div>
+
+  <!-- 8.5 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1K_RYsi9WRAjwJUx-DuaklCfoCY0zPR3F&sz=w1000" alt="">
+  </div>
+
+  <!-- 8.6 -->
+  <div class="item media video">
+    <video controls playsinline controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false;" src="https://radiotatv-pixel.github.io/fear-test/videos/8.6.mp4"></video>
+  </div>
+
+  <!-- 8.7 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1H0ZcN3L4xO4VHXkZoYYPC9uYEhsi-kB2&sz=w1000" alt="">
+  </div>
+
+  <!-- 8.8 -->
+  <div class="item card">
+    <p>🌿 У цій діагностичній частині ми зрозуміємо через що ви найкраще сприймаєте світ. Це допоможе надалі використати це вам же на користь.</p>
+    <p>Коли нам страшно або тривожно, ми часто шукаємо «універсальний» спосіб заспокоїтися. Але секрет у тому, що у кожної людини є провідна система сприйняття — спосіб, через який мозок найкраще отримує інформацію і відчуває безпеку.</p>
+    <p>👀 <b>1. Візуал</b><br>Ви мислите картинками. Любите красиві місця, кольори, схеми, списки. У стресі вам допомагає: дивитися на природу; запалити свічку; уявити безпечне місце; навести порядок навколо.</p>
+    <p>👂 <b>2. Аудіал</b><br>Для вас важливі звуки. Ви легко запам'ятовуєте голоси, інтонації, музику. У стресі допомагає: спокійна музика; звуки природи; розмова з людиною, якій довіряєте; підтримуючі фрази, сказані вголос.</p>
+    <p>✋ <b>3. Кінестетик</b><br>Ви пізнаєте світ через тіло та відчуття. Саме тому під час хвилювання вам хочеться рухатися, обіймати близьких або загортатися в плед. Допомагає: дихання; ходьба; теплий душ; масаж; потягування; будь-який комфортний рух.</p>
+    <p>🤔 <b>Як визначити свою провідну систему?</b><br>Запитайте себе: 👉 Що найшвидше допомагає мені заспокоїтися? Подивитися на щось красиве? Почути знайомий голос чи музику? Відчути тепло, рух або дотик? Саме ця відповідь і підкаже вашу сильну сторону.</p>
+    <p>❤️ Пам'ятайте: у кожної людини працюють усі три системи сприйняття. Але одна або дві зазвичай є провідними. Коли ви знаєте, як саме ваша психіка отримує відчуття безпеки, підтримувати себе стає набагато простіше. Часто достатньо просто заговорити з мозком його «близькою мовою».</p>
+  </div>
+
+  <!-- 8.9 -->
+  <div class="item card">
+    <p>Самодіагностика</p>
+  </div>
+
+  <!-- 8.10 -->
+  <div class="item media audio">
+    <iframe src="https://drive.google.com/file/d/1RAa6hFG-lbixWrk4K520g64ZP4PChvlD/preview"></iframe>
+  </div>
+
+  <!-- 8.11 -->
+  <div class="item media">
+    <img src="https://drive.google.com/thumbnail?id=1Jjd_gmNFBiBkk0XqoBYFw--JZY6Povuj&sz=w1000" alt="">
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <!-- 8.12: HOMEWORK -->
+  <div class="item homework" id="homework-block">
+    <h3>Після прослуховування медитації</h3>
+    <p style="font-size:15px;color:#E3DCC8;margin:0 0 18px;">Обов'язково запишіть свої спостереження по стану ваших емоцій та по внутрішніх відчуттях. Чи змінилось щось, що саме? Можливо прийшло якесь розуміння чи усвідомлення, або інсайт. Обов'язково запишіть та надішліть у чат.</p>
+
+    <p class="note">❤️ Це дасть можливість до розблокування доступу до наступного заняття.</p>
+
+    <!-- 8.13: video that goes with the homework -->
+    <div class="media video" style="margin-bottom:18px;">
+      <video controls playsinline controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false;" src="https://radiotatv-pixel.github.io/fear-test/videos/8.13.mp4"></video>
+    </div>
+
+    <textarea id="reflection" placeholder="Напиши тут свою відповідь…"></textarea>
+    <button id="submit-btn" onclick="submitReflection()">💌 Відправити й розблокувати наступне заняття</button>
+    <div class="thankyou" id="thankyou">Дякуємо, що поділилась. Ми поруч. 💚</div>
+  </div>
+
+  <!-- NEXT DAY -->
+  <div id="next-day">
+    <div class="icon">🎉</div>
+    <h3>День 9 вже готовий</h3>
+    <p>Ти зробила ще один крок. Продовжимо, коли будеш готова.</p>
+    <a href="#" class="btn2">Перейти до Дня 9</a>
+  </div>
+
+</div>
+
+<script>
+function submitReflection() {
+  var text = document.getElementById('reflection').value.trim();
+  if (!text) {
+    alert('Напиши, будь ласка, кілька слів перед відправкою.');
+    return;
+  }
+  var btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Надсилаємо…';
+
+  // ПОКИ ЩО ЛОКАЛЬНО, ДЛЯ ПЕРЕГЛЯДУ.
+  // Коли погодимо вигляд — тут буде такий самий fetch() до Apps Script,
+  // як у тесті (handleTelegramUpdate/appendResponse), просто без Telegram.
+  setTimeout(function () {
+    document.getElementById('thankyou').classList.add('show');
+    document.getElementById('reflection').style.display = 'none';
+    btn.style.display = 'none';
+
+    setTimeout(function () {
+      document.getElementById('next-day').classList.add('show');
+      document.getElementById('next-day').scrollIntoView({behavior: 'smooth', block: 'center'});
+    }, 1200);
+  }, 600);
+}
+
+// Захист від випадкового завантаження — блокуємо праву кнопку миші на фото
+document.addEventListener('contextmenu', function (e) {
+  if (e.target.tagName === 'IMG') e.preventDefault();
+});
+</script>
+
+</body>
+
+</html>
