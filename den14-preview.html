@@ -241,6 +241,11 @@
     user-select: none;
     pointer-events: auto;
   }
+
+  /* Приховати кнопку 'на весь екран' у відео (надійніше за controlsList) */
+  video::-webkit-media-controls-fullscreen-button {
+    display: none !important;
+  }
 </style>
 </head>
 <body>
@@ -378,8 +383,8 @@
     <p>Ти пройшла весь шлях від початку до кінця. Це справжня перемога — і ми пишаємось тобою.</p>
   </div>
 
-  <!-- 14.15-14.18: farewell video sequence, shown after final submission -->
-  <div id="farewell-videos" style="display:none;">
+  <!-- 14.15-14.18: farewell video sequence -->
+  <div id="farewell-videos">
     <div class="item media video">
       <video controls playsinline controlsList="nodownload noremoteplayback nofullscreen" disablePictureInPicture oncontextmenu="return false;" src="https://radiotatv-pixel.github.io/fear-test/videos/14.15.mp4"></video>
     </div>
@@ -432,7 +437,6 @@ function submitReflection() {
     setTimeout(function () {
       document.getElementById('next-day').classList.add('show');
       document.getElementById('next-day').scrollIntoView({behavior: 'smooth', block: 'center'});
-      document.getElementById('farewell-videos').style.display = 'block';
     }, 1200);
   }, 600);
 }
