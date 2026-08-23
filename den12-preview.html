@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>День 12 — По той бік страху</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -363,6 +364,17 @@
 </div>
 
 <script>
+var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQ2vCJDZikhMzmXsWhp-9MzfmYhktiIB1rqF3IPWsAUF4Bmm6Jxz-lLZHMfPeurR0/exec';
+
+function getTelegramUser() {
+  try {
+    var u = window.Telegram.WebApp.initDataUnsafe.user;
+    return { id: u.id, name: (u.first_name || '') + (u.last_name ? ' ' + u.last_name : '') };
+  } catch (e) {
+    return { id: '', name: '' };
+  }
+}
+
 function submitFirst() {
   var text = document.getElementById('reflection1').value.trim();
   if (!text) {
@@ -373,8 +385,21 @@ function submitFirst() {
   btn.disabled = true;
   btn.textContent = 'Надсилаємо…';
 
-  // ПОКИ ЩО ЛОКАЛЬНО, ДЛЯ ПЕРЕГЛЯДУ.
-  // Коли підключимо Таблицю — тут буде fetch() як для другої форми, але без відкриття next-day.
+  var user = getTelegramUser();
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      type: 'dayform',
+      form: '12a',
+      tgId: user.id,
+      name: user.name,
+      text: text
+    })
+  }).catch(function (err) {
+    console.error('Помилка відправки:', err);
+  });
+
   setTimeout(function () {
     document.getElementById('thankyou1').classList.add('show');
     document.getElementById('reflection1').style.display = 'none';
@@ -391,6 +416,21 @@ function submitReflection() {
   var btn = document.getElementById('submit-btn');
   btn.disabled = true;
   btn.textContent = 'Надсилаємо…';
+
+  var user = getTelegramUser();
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      type: 'dayform',
+      form: '12b',
+      tgId: user.id,
+      name: user.name,
+      text: text
+    })
+  }).catch(function (err) {
+    console.error('Помилка відправки:', err);
+  });
 
   setTimeout(function () {
     document.getElementById('thankyou').classList.add('show');
