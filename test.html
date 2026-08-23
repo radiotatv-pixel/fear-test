@@ -67,6 +67,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .form-label { font-size: 14px; font-weight: 500; margin-bottom: 6px; display: block; }
 .form-input { width: 100%; padding: 14px 16px; border: 1.5px solid #e0e0e0; border-radius: 10px; font-size: 15px; font-family: inherit; outline: none; transition: border-color 0.2s; }
 .form-input:focus { border-color: #111; }
+.form-error { font-size: 12px; color: #d32f2f; margin-top: 6px; display: none; }
 .payment-box { background: #f9f9f9; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px; }
 .payment-label { font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
 .payment-card { font-size: 18px; font-weight: 600; font-family: monospace; letter-spacing: 1px; background: #fff; padding: 12px; border-radius: 8px; border: 1px dashed #ccc; margin-bottom: 12px; cursor: pointer; user-select: all; }
@@ -80,7 +81,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 <body>
 <div class="app">
 
-<!-- SCREEN 1: INTRO -->
 <div id="screen-intro" class="fade-in">
   <div class="intro-badge">Тест на 2 хвилини</div>
   <h1 class="intro-title">Чи керує страх вашими рішеннями?</h1>
@@ -94,7 +94,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   <p class="trust-note">Результат — персональний, дані конфіденційні</p>
 </div>
 
-<!-- SCREEN 2: QUIZ -->
 <div id="screen-quiz" class="hidden">
   <div class="progress-wrap">
     <div class="progress-top"><span id="progress-label">Питання 1 з 5</span><span id="progress-pct">0%</span></div>
@@ -107,7 +106,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   </div>
 </div>
 
-<!-- SCREEN 3: DREAM -->
 <div id="screen-dream" class="hidden">
   <div class="dream-title">🔥 А тепер уявіть, що страх зник на один день. ЗОВСІМ!!!</div>
   <div class="dream-sub">Що ви зробили б насамперед?</div>
@@ -118,7 +116,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   </div>
 </div>
 
-<!-- SCREEN 4: CONTACT FORM (перед результатом) -->
 <div id="screen-form" class="hidden">
   <div class="dream-title">Ваш результат готовий! 🎯</div>
   <p class="form-hook">Дізнайтесь, який із трьох профілів переважає у ваших відповідях, і отримайте персональні поради, як діяти далі.</p>
@@ -127,13 +124,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     <input type="text" class="form-input" id="input-name" placeholder="Наприклад, Олена">
   </div>
   <div class="form-group">
-    <label class="form-label">Telegram (@username або номер)</label>
+    <label class="form-label">Telegram (@username або номер телефону з +38)</label>
     <input type="text" class="form-input" id="input-contact" placeholder="@username або +380...">
+    <div class="form-error" id="contact-error">Вкажіть, будь ласка, @username або номер телефону, що починається з +38</div>
   </div>
   <button class="btn btn-primary btn-full" id="btn-submit" onclick="submitForm()">Показати мій результат →</button>
 </div>
 
-<!-- SCREEN 5: RESULT + ПРАКТИКУМ (одразу після контакту) -->
 <div id="screen-result" class="hidden result-card">
   <div class="result-badge" id="result-badge">Результат тесту</div>
   <div class="result-title" id="result-title"></div>
@@ -246,7 +243,6 @@ function prevQuestion() {
   }
 }
 
-// Рахуємо результат одразу, але НЕ показуємо його — покажемо після контактної форми
 function computeResultAndShowDream() {
   let c1=0,c2=0,c3=0;
   answers.forEach((aIdx, qIdx) => {
@@ -295,17 +291,34 @@ function showForm() {
   f.classList.add('fade-in');
 }
 
+function isValidContact(contact) {
+  return /^@/.test(contact) || /^\+38/.test(contact);
+}
+
+let isSubmitting = false;
+
 function submitForm() {
+  if (isSubmitting) return;
+
   const name = document.getElementById('input-name').value.trim();
   const contact = document.getElementById('input-contact').value.trim();
+  const errorEl = document.getElementById('contact-error');
 
   if (!name || !contact) {
     alert('Будь ласка, заповніть обидва поля');
     return;
   }
 
+  if (!isValidContact(contact)) {
+    errorEl.style.display = 'block';
+    return;
+  }
+  errorEl.style.display = 'none';
+
+  isSubmitting = true;
   const btn = document.getElementById('btn-submit');
   btn.classList.add('sending');
+  btn.disabled = true;
   btn.textContent = 'Надсилаємо...';
 
   const dream = dreams[dreamChoice].text;
@@ -326,17 +339,7 @@ function submitForm() {
     tgUsername: tgUsername
   };
 
-  // Метод 1: Fetch з no-cors
-  try {
-    fetch(GS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-  } catch(e) {}
-
-  // Метод 2: Form через iframe (найнадійніший)
+  // ЄДИНИЙ спосіб відправки — форма через прихований iframe.
   const form = document.createElement('form');
   form.method = 'POST';
   form.action = GS_URL;
@@ -358,11 +361,6 @@ function submitForm() {
   document.body.appendChild(form);
   form.submit();
   setTimeout(() => { form.remove(); }, 2000);
-
-  // Метод 3: Telegram sendData
-  if (window.Telegram && Telegram.WebApp) {
-    try { Telegram.WebApp.sendData(JSON.stringify(payload)); } catch(e) {}
-  }
 
   setTimeout(() => {
     document.getElementById('screen-form').classList.add('hidden');
@@ -389,6 +387,7 @@ function restartQuiz() {
   answers = [];
   dreamChoice = null;
   computedResult = null;
+  isSubmitting = false;
   ['screen-result','screen-dream','screen-form'].forEach(id => {
     document.getElementById(id).classList.add('hidden');
   });
