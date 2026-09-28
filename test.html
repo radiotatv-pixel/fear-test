@@ -132,34 +132,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 </div>
 
 <div id="screen-result" class="hidden result-card">
-  <div class="result-badge" id="result-badge">Результат тесту</div>
-  <div class="result-title" id="result-title"></div>
-  <div class="result-desc" id="result-desc"></div>
+  <div class="result-badge">Готово!</div>
+  <div class="result-title">🎉 Результат надіслано тобі в Telegram!</div>
+  <div class="result-desc" style="text-align:center;">Перевір повідомлення від бота — там і твій персональний результат, і опис практикуму, і подальші кроки.</div>
+  <button class="btn btn-primary btn-full" onclick="window.Telegram.WebApp.close()" style="margin-top:20px;">Повернутися в Telegram</button>
+</div>
 
-  <div class="divider"></div>
-
-  <div class="cta-box">
-    <div class="cta-tag">14 днів · онлайн</div>
-    <h2 class="cta-title">«По той бік страху»</h2>
-    <p class="cta-subtitle">14-денний практикум внутрішньої свободи</p>
-    <p class="cta-desc">🤔 Можливо, найбільша перешкода між вами і цим кроком — не обставини, а страх. Хороша новина в тому, що з ним можна навчитися працювати. За 14 занять ви не просто дізнаєтесь, чому виникає страх. Ви крок за кроком навчитеся:</p>
-    <ul class="benefits">
-      <li>швидше заспокоювати тіло</li>
-      <li>розуміти свої реакції</li>
-      <li>перестати жити в постійному униканні</li>
-      <li>робити маленькі, але реальні кроки вперед</li>
-      <li>відчувати більше опори в собі</li>
-    </ul>
-    <p class="cta-note">Це не курс із сухою теорією. Це практикум, у якому більшість занять — це вправи, медитації, занурення й прості дії, які можна виконувати у своєму темпі.</p>
-    <div class="price-row"><span class="price">2 900 ₴</span><span class="price-old">4 500 ₴</span></div>
-    <div class="payment-box">
-      <div class="payment-label">Для оплати перекажіть на картку</div>
-      <div class="payment-card" onclick="copyCard()" id="card-number">5375 4141 2345 6789</div>
-      <div class="payment-note">Натисніть, щоб скопіювати номер картки<br>Після оплати надішліть скріншот у цей чат</div>
-    </div>
-    <button class="btn btn-primary btn-full" onclick="window.Telegram.WebApp.close()">Повернутися в чат</button>
-  </div>
-  <button class="btn btn-secondary btn-full" onclick="restartQuiz()">Пройти тест ще раз</button>
+<div id="screen-already" class="hidden result-card">
+  <div class="result-badge">Тест вже пройдено</div>
+  <div class="result-title">Ти вже проходила цей тест 🌿</div>
+  <div class="result-desc" style="text-align:center;">Результат, опис практикуму й реквізити для оплати вже надіслані тобі в Telegram — перевір повідомлення від бота.</div>
+  <button class="btn btn-primary btn-full" onclick="window.Telegram.WebApp.close()" style="margin-top:20px;">Повернутися в Telegram</button>
 </div>
 
 </div>
@@ -194,6 +177,7 @@ let current = 0;
 let answers = [];
 let dreamChoice = null;
 let computedResult = null;
+let computedCategory = null;
 
 function startQuiz() {
   document.getElementById('screen-intro').classList.add('hidden');
@@ -253,6 +237,7 @@ function computeResultAndShowDream() {
   if (c2 >= c1 && c2 >= c3) dominant = 2;
   if (c3 >= c1 && c3 >= c2) dominant = 3;
   computedResult = results[dominant];
+  computedCategory = dominant;
 
   document.getElementById('screen-quiz').classList.add('hidden');
   const d = document.getElementById('screen-dream');
@@ -334,6 +319,7 @@ function submitForm() {
     name: name,
     contact: contact,
     result: computedResult.title,
+    category: computedCategory,
     dream: dream,
     tgId: tgId,
     tgUsername: tgUsername
@@ -364,42 +350,63 @@ function submitForm() {
 
   setTimeout(() => {
     document.getElementById('screen-form').classList.add('hidden');
-    document.getElementById('result-title').textContent = computedResult.title;
-    document.getElementById('result-desc').textContent = computedResult.desc;
     const r = document.getElementById('screen-result');
     r.classList.remove('hidden');
     r.classList.add('fade-in');
   }, 1200);
 }
 
-function copyCard() {
-  const card = document.getElementById('card-number').textContent;
-  navigator.clipboard.writeText(card).then(() => {
-    const el = document.getElementById('card-number');
-    const orig = el.textContent;
-    el.textContent = '✓ Скопійовано!';
-    setTimeout(() => el.textContent = orig, 1500);
+// Перевірка "чи людина вже проходила тест" — через JSONP (script tag),
+// бо звичайний fetch до Apps Script часто блокується CORS.
+function checkAlreadyTaken(tgId) {
+  return new Promise((resolve) => {
+    let settled = false;
+    window.__gsCheckCallback = function (res) {
+      if (settled) return;
+      settled = true;
+      resolve(res);
+    };
+    const script = document.createElement('script');
+    script.src = GS_URL + '?checkTgId=' + encodeURIComponent(tgId) + '&callback=__gsCheckCallback';
+    script.onerror = function () {
+      if (settled) return;
+      settled = true;
+      resolve({ exists: false });
+    };
+    document.body.appendChild(script);
+    setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      resolve({ exists: false });
+    }, 4000);
   });
 }
 
-function restartQuiz() {
-  current = 0;
-  answers = [];
-  dreamChoice = null;
-  computedResult = null;
-  isSubmitting = false;
-  ['screen-result','screen-dream','screen-form'].forEach(id => {
-    document.getElementById(id).classList.add('hidden');
-  });
-  const intro = document.getElementById('screen-intro');
-  intro.classList.remove('hidden');
-  intro.classList.add('fade-in');
+function showAlreadyTakenScreen() {
+  document.getElementById('screen-intro').classList.add('hidden');
+  const s = document.getElementById('screen-already');
+  s.classList.remove('hidden');
+  s.classList.add('fade-in');
 }
 
 if (window.Telegram && Telegram.WebApp) {
   Telegram.WebApp.ready();
   Telegram.WebApp.expand();
 }
+
+(function initCheck() {
+  let tgId = '';
+  if (window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
+    tgId = Telegram.WebApp.initDataUnsafe.user.id || '';
+  }
+  if (tgId) {
+    checkAlreadyTaken(tgId).then((res) => {
+      if (res && res.exists) {
+        showAlreadyTakenScreen();
+      }
+    });
+  }
+})();
 </script>
 </body>
 </html>
