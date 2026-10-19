@@ -51,6 +51,12 @@ h1 { font-size: 24px; font-weight: 600; line-height: 1.2; margin-bottom: 14px; }
 .lesson summary::after { content: '+'; margin-left: auto; color: #aaa; font-size: 18px; font-weight: 400; }
 .lesson[open] summary::after { content: '–'; }
 .lesson .body { padding: 0 14px 14px 44px; font-size: 14px; color: #666; }
+.lesson.done { border-color: #c8e6c9; }
+.lesson.done summary .n { color: #2e7d32; }
+.lesson.current { border-color: #111; }
+.lesson .tag { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; margin-left: 6px; background: #111; color: #fff; white-space: nowrap; }
+.lesson .open-day { display: inline-block; margin-top: 10px; padding: 9px 16px; border-radius: 10px; border: 1.5px solid #ddd; background: transparent; font-size: 13.5px; font-family: inherit; cursor: pointer; color: #111; }
+.lesson.current .open-day { background: #111; color: #fff; border-color: #111; }
 .benefits { list-style: none; margin: 16px 0 8px; }
 .benefits li { font-size: 14px; color: #555; padding: 6px 0 6px 26px; position: relative; }
 .benefits li::before { content: "✓"; position: absolute; left: 0; color: #2e7d32; font-weight: 600; }
@@ -141,12 +147,25 @@ const LESSONS = [
   ['Завершення', 'Підсумки та інструменти на майбутнє.']
 ];
 
-(function renderLessons() {
+function renderLessons(s) {
+  const paidActive = !!(s && s.dayUrls);
+  const completed = paidActive ? Math.min(s.completed, 14) : 0;
+  window.__dayUrls = paidActive ? s.dayUrls : {};
   document.getElementById('lessons').innerHTML = LESSONS.map(function (l, i) {
-    return '<details class="lesson"><summary><span class="n">' + (i + 1) + '</span><span>' + l[0] +
-      '</span></summary><div class="body">' + l[1] + '</div></details>';
+    const n = i + 1;
+    let cls = 'lesson', mark = String(n), tag = '', extra = '';
+    if (paidActive && n <= completed) {
+      cls += ' done'; mark = '✓';
+      extra = '<br><button class="open-day" onclick="openInternal(window.__dayUrls[' + n + '])">Відкрити ще раз</button>';
+    } else if (paidActive && n === completed + 1 && !s.finished) {
+      cls += ' current'; tag = '<span class="tag">Зараз</span>';
+      extra = '<br><button class="open-day" onclick="openInternal(window.__dayUrls[' + n + '])">Почати День ' + n + '</button>';
+    }
+    return '<details class="' + cls + '"><summary><span class="n">' + mark + '</span><span>' + l[0] + tag +
+      '</span></summary><div class="body">' + l[1] + extra + '</div></details>';
   }).join('');
-})();
+}
+renderLessons(null);
 
 if (window.Telegram && Telegram.WebApp) {
   Telegram.WebApp.ready();
@@ -169,13 +188,13 @@ function showError(title, text, canRetry) {
 }
 
 // Запит до Apps Script у форматі JSONP (звичайний fetch блокується CORS)
-function fetchState(initData) {
+function fetchState(initData, action) {
   return new Promise(function (resolve) {
     let settled = false;
     const cb = '__kab_' + Date.now();
     window[cb] = function (res) { if (!settled) { settled = true; resolve(res); } };
     const script = document.createElement('script');
-    script.src = GS_URL + '?action=cabinet&callback=' + cb + '&initData=' + encodeURIComponent(initData);
+    script.src = GS_URL + '?action=' + (action || 'cabinet') + '&callback=' + cb + '&initData=' + encodeURIComponent(initData);
     script.onerror = function () { if (!settled) { settled = true; resolve(null); } };
     document.body.appendChild(script);
     setTimeout(function () { if (!settled) { settled = true; resolve(null); } }, 12000);
@@ -200,9 +219,24 @@ function load() {
   });
 }
 
+function startPay(btn) {
+  btn.disabled = true; btn.textContent = 'Готуємо оплату…';
+  const initData = (window.Telegram && Telegram.WebApp && Telegram.WebApp.initData) || '';
+  fetchState(initData, 'startDirect').then(function (s) {
+    if (s && s.ok && s.payUrl) { render(s); openPay(s.payUrl); return; }
+    btn.disabled = false; btn.textContent = 'Оплатити 500 грн';
+    alert('Не вдалося підготувати оплату. Спробуйте ще раз за хвилину.');
+  });
+}
+
 function openInternal(url) { window.location.href = url; }
 function openPay(url) {
   if (window.Telegram && Telegram.WebApp && Telegram.WebApp.openLink) Telegram.WebApp.openLink(url);
+  else window.open(url, '_blank');
+}
+
+function openTg(url) {
+  if (window.Telegram && Telegram.WebApp && Telegram.WebApp.openTelegramLink) Telegram.WebApp.openTelegramLink(url);
   else window.open(url, '_blank');
 }
 
@@ -226,8 +260,15 @@ function render(s) {
 
   if (!s.lead) {
     $('chip').className = 'chip wait';
-    $('chip').textContent = 'Ще не з нами';
-    tiles.push(tile('💬', 'Почніть з бота', 'Напишіть боту /start, щоб розпочати.', 'Закрити', 'Telegram.WebApp.close()'));
+    $('chip').textContent = 'Ласкаво просимо';
+    $('price-box').classList.remove('hidden');
+    $('price-now').textContent = '500 грн';
+    $('price-old').classList.remove('hidden');
+    $('timer').classList.add('hidden');
+    $('price-sub').textContent = 'Спеціальна ціна діє 48 годин після натискання «Оплатити». Далі — 1500 грн · доступ назавжди';
+    window.__testUrl = s.testUrl;
+    tiles.push(tile('💳', 'Оплата', 'Безпечна оплата карткою. Доступ відкриється автоматично.', 'Оплатити 500 грн', 'startPay(this)'));
+    tiles.push(tile('🧭', 'Безкоштовний тест', '2 хвилини — і побачиш, як страх впливає на твої рішення. Проходиться один раз.', 'Пройти тест', 'openInternal(window.__testUrl)', { light: true }));
   } else if (!s.paid) {
     $('chip').className = 'chip wait';
     $('chip').textContent = 'Очікує оплати';
@@ -264,6 +305,12 @@ function render(s) {
       s.finished ? 'Відкрити День 14' : 'Продовжити — День ' + s.nextDay, 'openInternal(window.__dayUrl)'));
   }
 
+  // закритий чат — після оплати і контактів
+  if (s.chatUrl) {
+    window.__chatUrl = s.chatUrl;
+    tiles.push(tile('💬', 'Закритий чат', 'Спільнота тих, хто проходить практикум. Питання і підтримка.', 'Приєднатись', 'openTg(window.__chatUrl)', { light: true }));
+  }
+
   // другий блок — тест
   if (s.lead) {
     if (s.testUrl) {
@@ -274,6 +321,7 @@ function render(s) {
     }
   }
 
+  renderLessons(s);
   $('tiles').className = 'tiles' + (tiles.length === 1 ? ' single' : '');
   $('tiles').innerHTML = tiles.join('');
   showOnly('screen-main');
@@ -297,4 +345,3 @@ load();
 </script>
 </body>
 </html>
-
