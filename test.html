@@ -134,7 +134,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 <div id="screen-result" class="hidden result-card">
   <div class="result-badge">Готово!</div>
   <div class="result-title">🎉 Результат надіслано тобі в Telegram!</div>
-  <div class="result-desc" style="text-align:center;">Перевір повідомлення від бота — там і твій персональний результат, і опис практикуму, і подальші кроки.</div>
+  <div class="result-desc" id="result-desc-text" style="text-align:center;">Перевір повідомлення від бота — там і твій персональний результат, і опис практикуму, і подальші кроки.</div>
   <button class="btn btn-primary btn-full" onclick="window.Telegram.WebApp.close()" style="margin-top:20px;">Повернутися в Telegram</button>
 </div>
 
@@ -269,7 +269,16 @@ function backToQuiz() {
   renderQuestion();
 }
 
+// Бонус-тест після оплати (шлях direct): ім'я й контакт у нас уже є, форму не показуємо
+const BONUS = new URLSearchParams(location.search).get('bonus') === '1';
+
 function showForm() {
+  if (BONUS) {
+    document.getElementById('screen-dream').classList.add('hidden');
+    document.getElementById('result-desc-text').textContent = 'Перевір повідомлення від бота — там твій персональний результат.';
+    submitForm();
+    return;
+  }
   document.getElementById('screen-dream').classList.add('hidden');
   const f = document.getElementById('screen-form');
   f.classList.remove('hidden');
@@ -289,16 +298,18 @@ function submitForm() {
   const contact = document.getElementById('input-contact').value.trim();
   const errorEl = document.getElementById('contact-error');
 
-  if (!name || !contact) {
-    alert('Будь ласка, заповніть обидва поля');
-    return;
-  }
+  if (!BONUS) {
+    if (!name || !contact) {
+      alert('Будь ласка, заповніть обидва поля');
+      return;
+    }
 
-  if (!isValidContact(contact)) {
-    errorEl.style.display = 'block';
-    return;
+    if (!isValidContact(contact)) {
+      errorEl.style.display = 'block';
+      return;
+    }
+    errorEl.style.display = 'none';
   }
-  errorEl.style.display = 'none';
 
   isSubmitting = true;
   const btn = document.getElementById('btn-submit');
