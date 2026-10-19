@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Мій кабінет — По той бік страху</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fff; color: #111; line-height: 1.5; -webkit-tap-highlight-color: transparent; }
+.app { max-width: 480px; margin: 0 auto; padding: 22px 16px 36px; min-height: 100vh; }
+.hidden { display: none !important; }
+.fade-in { animation: fadeIn .4s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.hello { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: #999; margin-bottom: 6px; }
+h1 { font-size: 24px; font-weight: 600; line-height: 1.2; margin-bottom: 14px; }
+.chip { display: inline-block; font-size: 12px; font-weight: 600; padding: 5px 11px; border-radius: 20px; margin-bottom: 16px; }
+.chip.wait { background: #fff3e0; color: #b45309; }
+.chip.ok { background: #e8f5e9; color: #2e7d32; }
+
+.price-box { border: 1.5px solid #e8e8e8; border-radius: 14px; padding: 16px 18px; margin-bottom: 14px; }
+.price { display: flex; align-items: baseline; gap: 10px; }
+.price b { font-size: 30px; }
+.price s { color: #bbb; font-size: 16px; }
+.price-sub { font-size: 13px; color: #888; margin-top: 2px; }
+.timer { font-size: 13px; color: #b45309; margin-top: 8px; }
+
+.progress-box { border: 1.5px solid #e8e8e8; border-radius: 14px; padding: 16px 18px; margin-bottom: 14px; }
+.bar { height: 6px; background: #e8e8e8; border-radius: 3px; overflow: hidden; margin: 8px 0 6px; }
+.bar i { display: block; height: 100%; background: #111; border-radius: 3px; }
+.small { font-size: 12px; color: #999; }
+
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
+.tiles.single { grid-template-columns: 1fr; }
+.tile { border: 1.5px solid #e8e8e8; border-radius: 14px; padding: 16px 14px; display: flex; flex-direction: column; justify-content: space-between; min-height: 150px; }
+.tile .ico { font-size: 26px; margin-bottom: 6px; }
+.tile h3 { font-size: 15px; font-weight: 600; line-height: 1.25; margin-bottom: 4px; }
+.tile p { font-size: 12.5px; color: #777; line-height: 1.4; margin-bottom: 12px; }
+.tile.muted { background: #fafafa; }
+.btn { width: 100%; padding: 13px 8px; border-radius: 11px; font-size: 14.5px; font-weight: 500; border: none; cursor: pointer; background: #111; color: #fff; font-family: inherit; }
+.btn.light { background: transparent; color: #111; border: 1.5px solid #ddd; }
+.btn:disabled { opacity: .45; cursor: default; }
+.done-mark { font-size: 13px; color: #2e7d32; font-weight: 500; }
+
+.about h2 { font-size: 19px; font-weight: 600; margin: 6px 0 6px; }
+.about .lead { font-size: 14.5px; color: #555; margin-bottom: 14px; }
+.lesson { border: 1.5px solid #e8e8e8; border-radius: 12px; margin-bottom: 8px; overflow: hidden; }
+.lesson summary { list-style: none; cursor: pointer; padding: 13px 14px; font-size: 14px; font-weight: 600; display: flex; gap: 10px; align-items: baseline; }
+.lesson summary::-webkit-details-marker { display: none; }
+.lesson summary .n { color: #999; font-weight: 600; min-width: 20px; }
+.lesson summary::after { content: '+'; margin-left: auto; color: #aaa; font-size: 18px; font-weight: 400; }
+.lesson[open] summary::after { content: '–'; }
+.lesson .body { padding: 0 14px 14px 44px; font-size: 14px; color: #666; }
+.benefits { list-style: none; margin: 16px 0 8px; }
+.benefits li { font-size: 14px; color: #555; padding: 6px 0 6px 26px; position: relative; }
+.benefits li::before { content: "✓"; position: absolute; left: 0; color: #2e7d32; font-weight: 600; }
+
+.footer { text-align: center; font-size: 12px; color: #bbb; margin-top: 26px; }
+.footer a { color: #999; }
+.center { text-align: center; padding-top: 70px; }
+.center h1 { margin-bottom: 10px; }
+.center p { font-size: 15px; color: #666; margin-bottom: 20px; }
+.spinner { width: 28px; height: 28px; border: 3px solid #e8e8e8; border-top-color: #111; border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 14px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+<div class="app">
+
+<div id="screen-loading" class="center">
+  <div class="spinner"></div>
+  <p>Завантажуємо ваш кабінет…</p>
+</div>
+
+<div id="screen-error" class="center hidden">
+  <h1 id="error-title">Не вдалося завантажити</h1>
+  <p id="error-text">Спробуйте ще раз за хвилину.</p>
+  <button class="btn" id="btn-retry" onclick="load()" style="max-width:240px;">Спробувати ще раз</button>
+</div>
+
+<div id="screen-main" class="hidden fade-in">
+  <div class="hello">Мій кабінет</div>
+  <h1 id="greeting">Привіт 🌿</h1>
+  <span class="chip" id="chip"></span>
+
+  <!-- ціна й таймер (до оплати) -->
+  <div class="price-box hidden" id="price-box">
+    <div class="price"><b id="price-now">500 грн</b><s id="price-old">1500 грн</s></div>
+    <div class="price-sub" id="price-sub">Практикум «По той бік страху» · доступ назавжди</div>
+    <div class="timer hidden" id="timer"></div>
+  </div>
+
+  <!-- прогрес (після оплати) -->
+  <div class="progress-box hidden" id="progress-box">
+    <div style="font-size:15px;font-weight:600;">Твій практикум</div>
+    <div class="bar"><i id="progress-fill" style="width:0%"></i></div>
+    <div class="small" id="progress-text"></div>
+  </div>
+
+  <!-- два блоки поряд -->
+  <div class="tiles" id="tiles"></div>
+
+  <!-- опис практикуму -->
+  <div class="about" id="about">
+    <h2>Про практикум</h2>
+    <p class="lead">Це не 14 лекцій, які ти подивилася — і забула. Це 14 кроків, де ти поступово знайомишся зі своїм страхом і бачиш, що стоїть за ним глибше.</p>
+    <div id="lessons"></div>
+    <ul class="benefits">
+      <li>14 повноцінних занять — теорія доступною мовою + практична робота</li>
+      <li>Більше 40 практик, вправ і медитацій</li>
+      <li>4 фахівці об'єднали різні підходи — психологію, коучинг, регресивну терапію та енергетичні практики</li>
+      <li>Можна проходити у власному темпі</li>
+      <li>Доступ назавжди</li>
+      <li>Закритий чат для спілкування та підтримки</li>
+    </ul>
+  </div>
+
+  <div class="footer">Питання? Напишіть нам у чаті з ботом · <a id="oferta-link" href="https://radiotatv-pixel.github.io/fear-test/oferta.html" target="_blank">Публічна оферта</a></div>
+</div>
+
+</div>
+
+<script>
+const GS_URL = 'https://script.google.com/macros/s/AKfycbwaR8u7UoJLO3DvI-z9XAj0eTo0aG60BiiscMFWebPDeL2Kby2cfeXhQqONfvp3fwdO/exec';
+
+const LESSONS = [
+  ['Знайомство і безпека', 'Познайомишся з ведучими, дізнаєшся правила простору.'],
+  ['Тіло і страх', 'Як страх проявляється в тілі, механізм зниження стресу.'],
+  ['Інтеграція', 'Екологічне проходження практикуму у своєму темпі.'],
+  ['Теорія простими словами', 'Що таке страх, тривога та фобія.'],
+  ['Перший досвід впливу на страх', 'Реальний досвід впливу на свій стан.'],
+  ['Спостереження', 'Що змінилося, як ти реагуєш зараз.'],
+  ['Звідки беруться страхи', 'Досвід, тіло, пам\'ять і захисні механізми.'],
+  ['Ресурс', 'Відновлення після глибокої роботи.'],
+  ['Я не мій страх', 'Відокремлення страху від себе.'],
+  ['Контроль і довіра', 'Що можна контролювати, а що ні.'],
+  ['Страх не ворог', 'Для чого існує страх.'],
+  ['Глибина і рівні', 'Чому деякі страхи не зникають просто від сили волі.'],
+  ['Регрес у роботі зі страхом', 'Глибші шари страху, регресивний гіпноз.'],
+  ['Завершення', 'Підсумки та інструменти на майбутнє.']
+];
+
+(function renderLessons() {
+  document.getElementById('lessons').innerHTML = LESSONS.map(function (l, i) {
+    return '<details class="lesson"><summary><span class="n">' + (i + 1) + '</span><span>' + l[0] +
+      '</span></summary><div class="body">' + l[1] + '</div></details>';
+  }).join('');
+})();
+
+if (window.Telegram && Telegram.WebApp) {
+  Telegram.WebApp.ready();
+  Telegram.WebApp.expand();
+}
+
+const $ = function (id) { return document.getElementById(id); };
+let timerHandle = null;
+
+function showOnly(id) {
+  ['screen-loading', 'screen-error', 'screen-main'].forEach(function (s) { $(s).classList.add('hidden'); });
+  $(id).classList.remove('hidden');
+}
+
+function showError(title, text, canRetry) {
+  $('error-title').textContent = title;
+  $('error-text').textContent = text;
+  $('btn-retry').classList.toggle('hidden', !canRetry);
+  showOnly('screen-error');
+}
+
+// Запит до Apps Script у форматі JSONP (звичайний fetch блокується CORS)
+function fetchState(initData) {
+  return new Promise(function (resolve) {
+    let settled = false;
+    const cb = '__kab_' + Date.now();
+    window[cb] = function (res) { if (!settled) { settled = true; resolve(res); } };
+    const script = document.createElement('script');
+    script.src = GS_URL + '?action=cabinet&callback=' + cb + '&initData=' + encodeURIComponent(initData);
+    script.onerror = function () { if (!settled) { settled = true; resolve(null); } };
+    document.body.appendChild(script);
+    setTimeout(function () { if (!settled) { settled = true; resolve(null); } }, 12000);
+  });
+}
+
+function load() {
+  showOnly('screen-loading');
+  const initData = (window.Telegram && Telegram.WebApp && Telegram.WebApp.initData) || '';
+  if (!initData) {
+    showError('Відкрийте кабінет з бота', 'Ця сторінка працює лише з кнопки «Мій кабінет» у Telegram-боті.', false);
+    return;
+  }
+  fetchState(initData).then(function (s) {
+    if (!s) { showError('Не вдалося завантажити', 'Перевірте інтернет і спробуйте ще раз.', true); return; }
+    if (!s.ok) {
+      if (s.error === 'auth') showError('Сесія застаріла', 'Закрийте кабінет і відкрийте його знову кнопкою в боті.', false);
+      else showError('Щось пішло не так', 'Спробуйте ще раз за хвилину.', true);
+      return;
+    }
+    render(s);
+  });
+}
+
+function openInternal(url) { window.location.href = url; }
+function openPay(url) {
+  if (window.Telegram && Telegram.WebApp && Telegram.WebApp.openLink) Telegram.WebApp.openLink(url);
+  else window.open(url, '_blank');
+}
+
+function tile(ico, title, text, btnLabel, onclick, opts) {
+  opts = opts || {};
+  const btn = opts.done
+    ? '<div class="done-mark">' + btnLabel + '</div>'
+    : '<button class="btn' + (opts.light ? ' light' : '') + '" onclick="' + onclick + '">' + btnLabel + '</button>';
+  return '<div class="tile' + (opts.muted ? ' muted' : '') + '"><div><div class="ico">' + ico + '</div><h3>' +
+    title + '</h3><p>' + text + '</p></div>' + btn + '</div>';
+}
+
+function render(s) {
+  $('greeting').textContent = s.name ? 'Привіт, ' + s.name + ' 🌿' : 'Привіт 🌿';
+  if (s.oferta) $('oferta-link').href = s.oferta;
+
+  const tiles = [];
+  $('price-box').classList.add('hidden');
+  $('progress-box').classList.add('hidden');
+  if (timerHandle) { clearInterval(timerHandle); timerHandle = null; }
+
+  if (!s.lead) {
+    $('chip').className = 'chip wait';
+    $('chip').textContent = 'Ще не з нами';
+    tiles.push(tile('💬', 'Почніть з бота', 'Напишіть боту /start, щоб розпочати.', 'Закрити', 'Telegram.WebApp.close()'));
+  } else if (!s.paid) {
+    $('chip').className = 'chip wait';
+    $('chip').textContent = 'Очікує оплати';
+    $('price-box').classList.remove('hidden');
+    $('price-now').textContent = s.price + ' грн';
+    if (s.promoActive) {
+      $('price-old').classList.remove('hidden');
+      $('price-sub').textContent = 'Спеціальна ціна. Далі — 1500 грн · доступ назавжди';
+      startTimer(s.promoEndsAt);
+    } else {
+      $('price-old').classList.add('hidden');
+      $('price-sub').textContent = 'Практикум «По той бік страху» · доступ назавжди';
+    }
+    const payUrl = s.payUrl;
+    window.__payUrl = payUrl;
+    tiles.push(payUrl
+      ? tile('💳', 'Оплата', 'Безпечна оплата карткою. Доступ відкриється автоматично.', 'Оплатити ' + s.price + ' грн', 'openPay(window.__payUrl)')
+      : tile('💳', 'Оплата', 'Посилання тимчасово недоступне. Напишіть нам у чаті з ботом.', 'Закрити', 'Telegram.WebApp.close()', { light: true }));
+  } else if (!s.contactsDone) {
+    $('chip').className = 'chip ok';
+    $('chip').textContent = 'Оплачено · дякуємо!';
+    window.__contactsUrl = s.contactsUrl;
+    tiles.push(tile('📝', 'Залишіть контакти', 'Ім\'я і телефон — щоб ми знали, як до вас звертатись. Потім відкриється День 1.', 'Залишити контакти', 'openInternal(window.__contactsUrl)'));
+  } else {
+    $('chip').className = 'chip ok';
+    $('chip').textContent = 'Оплачено · ти з нами';
+    $('progress-box').classList.remove('hidden');
+    const done = Math.min(s.completed, 14);
+    $('progress-fill').style.width = Math.round(done / 14 * 100) + '%';
+    $('progress-text').textContent = s.finished ? 'Практикум пройдено 🎉' : 'Пройдено ' + done + ' з 14 днів';
+    window.__dayUrl = s.dayUrl;
+    tiles.push(tile('🌿', s.finished ? 'Практикум' : 'Практикум',
+      s.finished ? 'Ти пройшла всі 14 днів. Можеш повернутись до будь-якого.' : 'Продовжуй у своєму темпі.',
+      s.finished ? 'Відкрити День 14' : 'Продовжити — День ' + s.nextDay, 'openInternal(window.__dayUrl)'));
+  }
+
+  // другий блок — тест
+  if (s.lead) {
+    if (s.testUrl) {
+      window.__testUrl = s.testUrl;
+      tiles.push(tile('🧭', s.paid ? 'Бонус-тест' : 'Безкоштовний тест', '2 хвилини — і побачиш, як страх впливає на твої рішення. Проходиться один раз.', 'Пройти тест', 'openInternal(window.__testUrl)', { light: true }));
+    } else {
+      tiles.push(tile('🧭', 'Тест', 'Результат вже у твоєму чаті з ботом.', '✅ Пройдено', '', { done: true, muted: true }));
+    }
+  }
+
+  $('tiles').className = 'tiles' + (tiles.length === 1 ? ' single' : '');
+  $('tiles').innerHTML = tiles.join('');
+  showOnly('screen-main');
+}
+
+function startTimer(endsAt) {
+  const el = $('timer');
+  function tick() {
+    const left = endsAt - Date.now();
+    if (left <= 0) { el.classList.add('hidden'); clearInterval(timerHandle); load(); return; }
+    const h = Math.floor(left / 3600000);
+    const m = Math.floor((left % 3600000) / 60000);
+    el.textContent = '⏳ Спеціальна ціна ще діє: ' + h + ' год ' + m + ' хв';
+    el.classList.remove('hidden');
+  }
+  tick();
+  timerHandle = setInterval(tick, 30000);
+}
+
+load();
+</script>
+</body>
+</html>
