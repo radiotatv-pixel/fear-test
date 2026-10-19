@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Контакти — По той бік страху</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fff; color: #111; line-height: 1.5; -webkit-tap-highlight-color: transparent; }
+.app { max-width: 480px; margin: 0 auto; padding: 24px 16px; min-height: 100vh; }
+.hidden { display: none !important; }
+.fade-in { animation: fadeIn 0.4s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.title { font-size: 24px; font-weight: 600; line-height: 1.25; margin-bottom: 10px; }
+.hook { font-size: 15px; color: #555; line-height: 1.6; margin-bottom: 24px; }
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 14px; font-weight: 500; margin-bottom: 6px; display: block; }
+.form-input { width: 100%; padding: 14px 16px; border: 1.5px solid #e0e0e0; border-radius: 10px; font-size: 16px; font-family: inherit; outline: none; transition: border-color 0.2s; }
+.form-input:focus { border-color: #111; }
+.form-error { font-size: 12px; color: #d32f2f; margin-top: 6px; display: none; }
+.consent { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: #555; line-height: 1.5; margin: 6px 0 22px; }
+.consent input { margin-top: 3px; width: 18px; height: 18px; flex-shrink: 0; }
+.consent a { color: #111; }
+.btn { width: 100%; padding: 16px 20px; border-radius: 12px; font-size: 16px; font-weight: 500; cursor: pointer; border: none; font-family: inherit; background: #111; color: #fff; }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.done { text-align: center; padding-top: 40px; }
+.done .title { margin-bottom: 14px; }
+.sending { opacity: 0.6; pointer-events: none; }
+</style>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+<div class="app">
+
+<div id="screen-form" class="fade-in">
+  <h1 class="title">Дякуємо за оплату! 💚</h1>
+  <p class="hook">Вкажіть, будь ласка, ваше ім'я і номер телефону — щоб ми знали, як до вас звертатись і як з вами зв'язатись.</p>
+
+  <div class="form-group">
+    <label class="form-label" for="input-name">Ваше ім'я</label>
+    <input type="text" class="form-input" id="input-name" placeholder="Наприклад, Олена" autocomplete="given-name">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label" for="input-phone">Номер телефону</label>
+    <input type="tel" class="form-input" id="input-phone" placeholder="+380..." autocomplete="tel">
+    <div class="form-error" id="phone-error">Вкажіть номер у форматі +380XXXXXXXXX (з плюсом і кодом країни)</div>
+  </div>
+
+  <label class="consent">
+    <input type="checkbox" id="input-consent">
+    <span>Я погоджуюсь з умовами <a href="https://radiotatv-pixel.github.io/fear-test/oferta.html" target="_blank">публічної оферти</a> та обробкою моїх контактних даних.</span>
+  </label>
+
+  <button class="btn" id="btn-submit" onclick="submitForm()">Зберегти й продовжити →</button>
+</div>
+
+<div id="screen-done" class="hidden done">
+  <h1 class="title">Дякую! 🌿</h1>
+  <p class="hook">Контакти збережено. Я вже надіслала вам повідомлення в Telegram — там можна обрати, з чого почати.</p>
+  <button class="btn" onclick="closeApp()">Повернутися в Telegram</button>
+</div>
+
+<div id="screen-error" class="hidden done">
+  <h1 class="title">Відкрийте форму з бота</h1>
+  <p class="hook">Ця сторінка працює лише коли її відкрито кнопкою «Залишити контакти» у Telegram-боті.</p>
+</div>
+
+</div>
+
+<script>
+const GS_URL = 'https://script.google.com/macros/s/AKfycbwaR8u7UoJLO3DvI-z9XAj0eTo0aG60BiiscMFWebPDeL2Kby2cfeXhQqONfvp3fwdO/exec';
+
+if (window.Telegram && Telegram.WebApp) {
+  Telegram.WebApp.ready();
+  Telegram.WebApp.expand();
+}
+
+function getTgUser() {
+  if (window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
+    return Telegram.WebApp.initDataUnsafe.user;
+  }
+  return null;
+}
+
+function closeApp() {
+  if (window.Telegram && Telegram.WebApp) Telegram.WebApp.close();
+}
+
+// Без Telegram ID форма безглузда — просимо відкрити з бота
+if (!getTgUser()) {
+  document.getElementById('screen-form').classList.add('hidden');
+  document.getElementById('screen-error').classList.remove('hidden');
+}
+
+// Нормалізуємо телефон: прибираємо пробіли, дужки, дефіси; потрібен "+" і 10–15 цифр
+function normalizePhone(raw) {
+  const cleaned = raw.replace(/[\s\-()]/g, '');
+  return /^\+\d{10,15}$/.test(cleaned) ? cleaned : null;
+}
+
+let isSubmitting = false;
+
+function submitForm() {
+  if (isSubmitting) return;
+
+  const name = document.getElementById('input-name').value.trim();
+  const phoneRaw = document.getElementById('input-phone').value.trim();
+  const consent = document.getElementById('input-consent').checked;
+  const errorEl = document.getElementById('phone-error');
+
+  if (!name || !phoneRaw) {
+    alert('Будь ласка, заповніть ім\'я і номер телефону');
+    return;
+  }
+  const phone = normalizePhone(phoneRaw);
+  if (!phone) {
+    errorEl.style.display = 'block';
+    return;
+  }
+  errorEl.style.display = 'none';
+
+  if (!consent) {
+    alert('Щоб продовжити, потрібно погодитись з умовами оферти');
+    return;
+  }
+
+  const user = getTgUser();
+  if (!user) return;
+
+  isSubmitting = true;
+  const btn = document.getElementById('btn-submit');
+  btn.classList.add('sending');
+  btn.disabled = true;
+  btn.textContent = 'Зберігаємо...';
+
+  const payload = {
+    type: 'contacts',
+    tgId: user.id || '',
+    tgUsername: user.username || '',
+    name: name,
+    phone: phone,
+    consent: true
+  };
+
+  // Відправка — форма через прихований iframe (так само, як у тесті)
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = GS_URL;
+  form.target = 'gs-iframe';
+  form.style.display = 'none';
+  const input = document.createElement('input');
+  input.name = 'data';
+  input.value = JSON.stringify(payload);
+  form.appendChild(input);
+
+  let iframe = document.getElementById('gs-iframe');
+  if (!iframe) {
+    iframe = document.createElement('iframe');
+    iframe.id = 'gs-iframe';
+    iframe.name = 'gs-iframe';
+    iframe.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;';
+    document.body.appendChild(iframe);
+  }
+  document.body.appendChild(form);
+  form.submit();
+  setTimeout(() => { form.remove(); }, 2000);
+
+  setTimeout(() => {
+    document.getElementById('screen-form').classList.add('hidden');
+    const d = document.getElementById('screen-done');
+    d.classList.remove('hidden');
+    d.classList.add('fade-in');
+  }, 1200);
+}
+</script>
+</body>
+</html>
