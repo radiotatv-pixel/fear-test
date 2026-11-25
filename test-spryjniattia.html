@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Алгоритм спокою · Тест</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fff; color: #111; line-height: 1.5; -webkit-tap-highlight-color: transparent; }
+.app { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; min-height: 100vh; }
+.hidden { display: none !important; }
+.fade-in { animation: fadeIn 0.4s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.intro-badge { display: inline-block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-bottom: 12px; }
+.intro-title { font-size: 26px; font-weight: 600; line-height: 1.2; margin-bottom: 12px; }
+.intro-sub { font-size: 16px; line-height: 1.55; color: #666; margin-bottom: 20px; }
+.intro-rules { font-size: 14px; line-height: 1.6; color: #666; margin-bottom: 28px; padding: 14px 16px; border-radius: 12px; background: #f7f7f7; }
+.intro-stats { display: flex; gap: 12px; margin-bottom: 32px; }
+.stat { flex: 1; text-align: center; padding: 16px 8px; border-radius: 12px; border: 1.5px solid #e8e8e8; }
+.stat-num { font-size: 22px; font-weight: 600; display: block; }
+.stat-label { font-size: 12px; color: #999; margin-top: 4px; }
+.btn { width: 100%; padding: 16px 20px; border-radius: 12px; font-size: 16px; font-weight: 500; cursor: pointer; border: none; font-family: inherit; transition: all 0.2s; }
+.btn-primary { background: #111; color: #fff; }
+.btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+.btn-secondary { background: transparent; color: #666; border: 1.5px solid #e0e0e0; }
+.trust-note { font-size: 12px; color: #bbb; text-align: center; margin-top: 12px; }
+.progress-wrap { margin-bottom: 24px; }
+.progress-top { display: flex; justify-content: space-between; font-size: 12px; color: #999; margin-bottom: 6px; }
+.progress-bar { height: 4px; background: #e8e8e8; border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: #111; border-radius: 2px; transition: width 0.5s ease-out; }
+.q-block { margin-bottom: 30px; }
+.question-text { font-size: 18px; font-weight: 500; line-height: 1.4; margin-bottom: 14px; }
+.q-num { color: #999; font-weight: 600; margin-right: 6px; }
+.option-btn { display: flex; align-items: center; width: 100%; text-align: left; padding: 14px 14px; margin-bottom: 8px; border: 1.5px solid #e8e8e8; border-radius: 12px; background: transparent; font-size: 15px; color: #111; cursor: pointer; transition: all 0.2s; font-family: inherit; line-height: 1.4; }
+.option-btn:active { transform: scale(0.985); }
+.option-btn.selected { border-color: #111; background: #f0f0f0; }
+.opt-letter { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; margin-right: 12px; flex-shrink: 0; transition: all 0.2s; }
+.option-btn.selected .opt-letter { background: #111; color: #fff; border-color: #111; }
+.nav-buttons { display: flex; gap: 10px; margin-top: 8px; }
+.hint { font-size: 13px; color: #999; text-align: center; margin-top: 10px; }
+.result-card { text-align: center; padding: 16px 4px 8px; }
+.result-badge { display: inline-block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; padding: 5px 12px; border-radius: 20px; background: #f0f0f0; color: #666; margin-bottom: 20px; }
+.result-title { font-size: 22px; font-weight: 600; margin-bottom: 16px; line-height: 1.3; }
+.result-desc { font-size: 15px; line-height: 1.7; color: #555; margin-bottom: 12px; }
+.sending { opacity: 0.6; pointer-events: none; }
+</style>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+<div class="app">
+
+<div id="screen-intro" class="fade-in">
+  <div class="intro-badge">Мінікурс «Алгоритм спокою» · Заняття 1</div>
+  <h1 class="intro-title">Через що тобі найлегше повернутися до себе?</h1>
+  <p class="intro-sub">Тест покаже твій провідний канал сприйняття: зір, слух, тіло, логіку чи запахи й смаки. Знадобиться на наступному занятті.</p>
+  <div class="intro-rules">У кожному питанні обери один варіант, найбільше схожий на тебе. Довго не роздумуй, довірся першій реакції. Правильних і неправильних відповідей тут немає.</div>
+  <div class="intro-stats">
+    <div class="stat"><span class="stat-num">12</span><div class="stat-label">питань</div></div>
+    <div class="stat"><span class="stat-num">5</span><div class="stat-label">типів</div></div>
+    <div class="stat"><span class="stat-num">3</span><div class="stat-label">хвилини</div></div>
+  </div>
+  <button class="btn btn-primary" onclick="startQuiz()">Почати тест</button>
+  <p class="trust-note">Результат прийде тобі в Telegram</p>
+</div>
+
+<div id="screen-quiz" class="hidden">
+  <div class="progress-wrap">
+    <div class="progress-top"><span id="progress-label"></span><span id="progress-pct">0%</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div id="questions-box"></div>
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" id="btn-prev" onclick="prevPage()" style="flex:0.35;">Назад</button>
+    <button class="btn btn-primary" id="btn-next" onclick="nextPage()" disabled style="flex:0.65;">Далі</button>
+  </div>
+  <p class="hint" id="hint">Дай відповідь на всі питання на цьому екрані</p>
+</div>
+
+<div id="screen-result" class="hidden result-card">
+  <div class="result-badge">Готово!</div>
+  <div class="result-title">🎉 Результат надіслано тобі в Telegram!</div>
+  <div class="result-desc">Перевір повідомлення від бота: там твій провідний канал і опис усіх п'яти типів.</div>
+  <button class="btn btn-primary" onclick="closeApp()" style="margin-top:20px;">Повернутися в Telegram</button>
+</div>
+
+<div id="screen-notg" class="hidden result-card">
+  <div class="result-badge">Відкрий у Telegram</div>
+  <div class="result-title">Тест треба відкрити через бота</div>
+  <div class="result-desc">Щоб результат прийшов тобі в Telegram, відкрий тест кнопкою в боті мінікурсу.</div>
+</div>
+
+</div>
+
+<script>
+// Адреса воркера Cloudflare (бот мінікурсу) + /test. Замінити ВСТАВ_АДРЕСУ на адресу воркера.
+const GS_URL = 'https://algorytm-spokoyu.radiotatv.workers.dev/test';
+
+const PER_PAGE = 3;
+const LETTERS = ['А', 'Б', 'В', 'Г', 'Д'];
+
+const questions = [
+  { q: "Коли я згадую приємний момент, найперше…", o: [
+    "Перед очима з'являється картинка: місце, люди, кольори, деталі.",
+    "Згадую голоси, розмови, музику або звуки того моменту.",
+    "Повертається відчуття, яке я тоді переживала: тепло, радість, легкість, хвилювання.",
+    "Пригадую, що саме відбувалося, у якій послідовності та чому цей момент був важливим.",
+    "Згадую запахи або смаки, які були пов'язані з тією подією."] },
+  { q: "Коли мені потрібно прийняти важливе рішення…", o: [
+    "Уявляю можливі варіанти розвитку подій і подумки «дивлюся», що з цього вийде.",
+    "Обговорюю ситуацію з кимось або проговорюю її подумки.",
+    "Прислухаюся до власних відчуттів: наскільки мені комфортно з тим чи іншим рішенням.",
+    "Зважую факти, аналізую плюси й мінуси, шукаю логічне пояснення.",
+    "Орієнтуюся на власні вподобання та асоціації: що викликає приємне відчуття, нагадує щось хороше."] },
+  { q: "Найкраще я запам'ятовую нову інформацію, коли…", o: [
+    "Бачу текст, схему, малюнок або приклад.",
+    "Чую пояснення, розмову чи повторюю інформацію вголос.",
+    "Можу спробувати все на практиці, щось зробити власноруч.",
+    "Розумію логіку, структуру та взаємозв'язки між частинами інформації.",
+    "Пов'язую інформацію з конкретним запахом, смаком або приємною асоціацією."] },
+  { q: "У спілкуванні з людьми я найбільше помічаю…", o: [
+    "Вираз обличчя, погляд, зовнішність та загальний вигляд людини.",
+    "Голос, інтонацію, тембр, темп мовлення та добір слів.",
+    "Поставу, рухи, жести, дистанцію та загальну манеру поведінки.",
+    "Зміст сказаного, логіку, послідовність думок і відповідність слів діям.",
+    "Запах людини, її парфумів або інші запахи, які створюють загальне враження."] },
+  { q: "Коли я хочу відпочити, мені найбільше підходить…", o: [
+    "Помилуватися красивим краєвидом, подивитися фільм або побути в приємному просторі.",
+    "Послухати музику, аудіокнигу чи поговорити з близькою людиною.",
+    "Прогулятися, полежати під теплою ковдрою, прийняти душ або розслабити тіло.",
+    "Відкласти справи, навести порядок у думках, почитати або зайнятися чимось інтелектуальним.",
+    "Випити ароматного чаю, приготувати улюблену страву або насолодитися приємним запахом."] },
+  { q: "У спогадах з дитинства я найчіткіше пам'ятаю…", o: [
+    "Місця, кімнати, обличчя людей, іграшки та картинки з минулого.",
+    "Голоси рідних, їхні слова, улюблені пісні та звуки дитинства.",
+    "Відчуття: як мене обіймали, як я бігала, гралася, торкалася різних речей.",
+    "Події, їхню послідовність, цікаві історії та те, що я тоді зрозуміла.",
+    "Запахи домашньої кухні, улюблених страв, фруктів або смаколиків."] },
+  { q: "Коли я потрапляю в незнайоме місце, мені легше зорієнтуватися, якщо…", o: [
+    "Можу роздивитися місцевість, запам'ятати будівлі, вивіски та орієнтири.",
+    "Мені пояснять дорогу словами або я почую підказки від інших людей.",
+    "Можу пройтися, відчути напрямок і поступово зорієнтуватися на місцевості.",
+    "Маю карту, маршрут або чітку послідовність кроків.",
+    "Запам'ятовую місце за характерними запахами: кав'ярня, пекарня, квіти, свіже повітря."] },
+  { q: "Коли я опиняюся в ситуації сильного стресу, найперше мені хочеться…", o: [
+    "Оглянутися навколо, побачити, де я перебуваю, що відбувається і куди можна перейти в безпечне місце.",
+    "Почати говорити, почути знайомий голос або зосередитися на звуках навколо.",
+    "Знайти фізичну опору, відчути підлогу під ногами, сісти, порухатися або загорнутися в щось тепле.",
+    "Зрозуміти, що сталося, розкласти ситуацію на зрозумілі частини та визначити наступний крок.",
+    "Відчути знайомий приємний запах або смак, який асоціюється зі спокоєм і безпекою."] },
+  { q: "Коли я обираю одяг, речі для дому або подарунок, для мене важливо…", o: [
+    "Як це виглядає, які має кольори, форму та наскільки подобається зовні.",
+    "Що про це говорять інші, які відгуки я чую, як це описують.",
+    "Наскільки це зручне, приємне на дотик і комфортне у використанні.",
+    "Які характеристики має річ, наскільки вона практична та чи виправдовує свою ціну.",
+    "Чи подобається мені її аромат або смак, якщо йдеться про їжу, напої чи ароматичні речі."] },
+  { q: "Щоб повернути собі гарний настрій після важкого дня, я найчастіше…", o: [
+    "Дивлюся щось красиве, переглядаю фотографії, змінюю обстановку.",
+    "Вмикаю улюблену музику, телефоную комусь або слухаю цікаву розмову.",
+    "Іду гуляти, займаюся улюбленою справою, приймаю душ або просто відпочиваю тілом.",
+    "Завершую якусь справу, складаю план або впорядковую те, що мене турбує.",
+    "Готую щось смачне, п'ю улюблений напій або насолоджуюся приємними ароматами."] },
+  { q: "Коли я хочу навчитися чогось нового, мені найпростіше…", o: [
+    "Подивитися, як це робить інша людина, побачити приклад або відеоінструкцію.",
+    "Послухати пояснення, поставити запитання та обговорити незрозумілі моменти.",
+    "Взяти й спробувати самостійно, навіть якщо спочатку щось не виходитиме.",
+    "Спочатку розібратися в принципах, правилах і послідовності дій.",
+    "Спершу створити затишок: заварити улюблений чай чи каву, запалити ароматну свічку, і тоді братися до навчання."] },
+  { q: "Коли мені потрібно відчути себе спокійніше й повернути внутрішню рівновагу, найкраще допомагає…", o: [
+    "Подивитися на щось приємне: природу, красиві фотографії, знайомі місця.",
+    "Почитати, поговорити з близькою людиною, послухати спокійний голос або музику.",
+    "Відчути тепло, затишок, прийняти душ, обійняти близьку людину або порухатися.",
+    "Зрозуміти причину свого стану, визначити, що зараз залежить від мене, і скласти план.",
+    "Відчути знайомий аромат, випити улюблений напій або скуштувати щось приємне."] }
+];
+
+const PAGES = Math.ceil(questions.length / PER_PAGE);
+let page = 0;
+let answers = [];
+
+function tgUser() {
+  if (window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
+    return Telegram.WebApp.initDataUnsafe.user;
+  }
+  return null;
+}
+
+function show(id) {
+  ['screen-intro', 'screen-quiz', 'screen-result', 'screen-notg'].forEach(s => document.getElementById(s).classList.add('hidden'));
+  const el = document.getElementById(id);
+  el.classList.remove('hidden');
+  el.classList.add('fade-in');
+}
+
+function startQuiz() {
+  if (!tgUser()) { show('screen-notg'); return; }
+  show('screen-quiz');
+  renderPage();
+}
+
+function renderPage() {
+  const from = page * PER_PAGE;
+  const to = Math.min(from + PER_PAGE, questions.length);
+  const done = answers.filter(a => a !== undefined).length;
+  const pct = Math.round((done / questions.length) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `Питання ${from + 1}–${to} з ${questions.length}`;
+  document.getElementById('progress-pct').textContent = pct + '%';
+
+  let html = '';
+  for (let i = from; i < to; i++) {
+    html += `<div class="q-block"><div class="question-text"><span class="q-num">${i + 1}.</span>${questions[i].q}</div>`;
+    questions[i].o.forEach((text, j) => {
+      const sel = answers[i] === j ? 'selected' : '';
+      html += `<button class="option-btn ${sel}" onclick="selectOpt(${i},${j})"><span class="opt-letter">${LETTERS[j]}</span><span>${text}</span></button>`;
+    });
+    html += `</div>`;
+  }
+  document.getElementById('questions-box').innerHTML = html;
+
+  let allAnswered = true;
+  for (let i = from; i < to; i++) if (answers[i] === undefined) allAnswered = false;
+  const nextBtn = document.getElementById('btn-next');
+  nextBtn.disabled = !allAnswered;
+  nextBtn.textContent = page === PAGES - 1 ? 'Отримати результат' : 'Далі';
+  document.getElementById('hint').style.visibility = allAnswered ? 'hidden' : 'visible';
+  document.getElementById('btn-prev').style.visibility = page === 0 ? 'hidden' : 'visible';
+}
+
+function selectOpt(qi, oi) {
+  answers[qi] = oi;
+  const y = window.scrollY;
+  renderPage();
+  window.scrollTo(0, y);
+}
+
+function nextPage() {
+  if (page < PAGES - 1) { page++; renderPage(); window.scrollTo(0, 0); }
+  else submitResult();
+}
+
+function prevPage() {
+  if (page > 0) { page--; renderPage(); window.scrollTo(0, 0); }
+}
+
+let isSubmitting = false;
+
+function submitResult() {
+  if (isSubmitting) return;
+  isSubmitting = true;
+  const btn = document.getElementById('btn-next');
+  btn.classList.add('sending');
+  btn.textContent = 'Надсилаємо...';
+
+  const user = tgUser() || {};
+  const payload = {
+    type: 'perception_test',
+    initData: (window.Telegram && Telegram.WebApp) ? Telegram.WebApp.initData : '',
+    tgId: user.id || '',
+    answers: answers.map(i => LETTERS[i]).join('')
+  };
+
+  // Відправка так само, як у тесті про страхи: форма через прихований iframe
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = GS_URL;
+  form.target = 'gs-iframe';
+  form.style.display = 'none';
+  const input = document.createElement('input');
+  input.name = 'data';
+  input.value = JSON.stringify(payload);
+  form.appendChild(input);
+
+  let iframe = document.getElementById('gs-iframe');
+  if (!iframe) {
+    iframe = document.createElement('iframe');
+    iframe.id = 'gs-iframe';
+    iframe.name = 'gs-iframe';
+    iframe.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;';
+    document.body.appendChild(iframe);
+  }
+  document.body.appendChild(form);
+  form.submit();
+  setTimeout(() => { form.remove(); }, 2000);
+  setTimeout(() => show('screen-result'), 1200);
+}
+
+function closeApp() {
+  if (window.Telegram && Telegram.WebApp) Telegram.WebApp.close();
+}
+
+if (window.Telegram && Telegram.WebApp) {
+  Telegram.WebApp.ready();
+  Telegram.WebApp.expand();
+}
+</script>
+</body>
+</html>
